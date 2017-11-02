@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>clx后台登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <style>
+        body{height:100%;background:#16a085;overflow:hidden;}
+        canvas{z-index:-1;position:absolute;}
+    </style>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/verificationNumbers.js"></script>
+    <script src="/static/js/Particleground.js"></script>
+    <script>
+    $(document).ready(function() {
+    //粒子背景特效
+        $('body').particleground({
+            dotColor: '#5cbdaa',
+            lineColor: '#5cbdaa'
+        });
+    });
+    </script>
+</head>
+<body>
+    <canvas class="pg-canvas" width="1366" height="559"></canvas>
+    <form class="form-horizontal" method="post" style="padding-bottom: 30px"> {% csrf_token %}
+        <dl class="admin_login">
+            <dt>
+                <strong>clx后台管理系统</strong>
+                <em>Management System</em>
+                <span style="font-size: 15px;color: #00CCFF">{{ error }}</span>
+            </dt>
+            <dd class="user_icon">
+                <input name="username" type="text" placeholder="用户名" class="login_txtbx">
+            </dd>
+            <dd class="pwd_icon">
+                <input name="password" type="password" placeholder="密码" class="login_txtbx">
+            </dd>
+            <dd>
+                <button type="submit"  class="submit_btn">登陆</button>
+            </dd>
+        </dl>
+    </form>
+</body>
+</html>
