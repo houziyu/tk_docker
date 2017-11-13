@@ -1,7 +1,3 @@
-from django.test import TestCase
-
-# Create your tests here.
-
 from main.lib import docker_initial
 import datetime
 from lib import config
@@ -14,7 +10,7 @@ def cron_dump_log():
         for y in docker_container_all[i]:
             service_name = y.name.split('-')[0]
             if y.status == 'running':
-                log_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                log_date = (datetime.datetime.now() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
                 num = 0
                 try:
                     while True:
@@ -22,13 +18,17 @@ def cron_dump_log():
                         num += 1
                         log_init = y.get_archive(service_log_path)
                         log_str = str(log_init[0].data, encoding="utf-8")
-                        log_local_name = '/Users/yunque/Desktop/test/' + hostname + '-' + service_name + '-service' + '-' + log_date + '.' + str(num) + '.log'
+                        log_local_name = config.log_dir_master+ '/' + service_name + '-service/' + hostname + '-' + service_name + '-' + log_date + '.' + str(num) + '.log'
+                        print(log_local_name)
                         log_file = open(log_local_name, 'a+')
                         log_file.write('执行时间:' + log_date)
                         log_file.write(log_str)
                         log_file.close()
                 except BaseException:
                     pass
-
-
-cron_dump_log()
+#访问并下载容器状态数据
+# def download_status_data():
+#     response = request.urlopen(r'http://127.0.0.1:8080/data_acquisition/')  # <http.client.HTTPResponse object at 0x00000000048BC908> HTTPResponse类型
+#     page = response.read()
+#     page = page.decode('utf-8')
+#     print(page)

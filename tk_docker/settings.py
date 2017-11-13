@@ -37,9 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'common',
     'log',
     'script',
+]
+
+CRONJOBS = [
+    ('0 1 * * *', 'log.cron_dump_log.cron_dump_log'),
+    # ('* * * * *', 'main.cron_download_log.download_status_data')
 ]
 
 MIDDLEWARE = [
