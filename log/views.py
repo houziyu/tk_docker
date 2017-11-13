@@ -32,9 +32,7 @@ def DockerLog(Hostname, ContainerName, FindTime):
                 if FindTime:
                     FindTime = int(FindTime)
                     DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime,hours=-8)
-                    print(DatetimeNow)
                     b_logs = i.logs(since=DatetimeNow)
-                    print(b_logs)
                     return b_logs
                 else:
                     b_logs = i.logs(tail=config.log_tail_line)
