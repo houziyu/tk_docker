@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<script>
+$(function(){
+  $(".build").click(function () {
+    var script_id = $(this).parent().siblings(".script_id").text();
+    var script_parameter = $(this).parent().siblings(".script_parameter").children("select").val();
+    window.location.href='/script/execution/?script_id='+script_id+'&script_parameter='+ script_parameter;
+  })
+})
+
+</script>
+<table class="table table-bordered;table table-hover" style="margin-top: 10px">
+    <thead>
+        <tr>
+            <th>Ordinal number</th>
+            <th>Script Name</th>
+            <th>Script Path</th>
+            <th>Service Name</th>
+            <th>Server Name</th>
+            <th>Script Parameter</th>
+            <th>Script Slot</th>
+        </tr>
+    </thead>
+    <tbody id="display_table">
+        {% for script  in ScriptAll %}
+            <tr style="font-size: 15px ">
+                <td class="script_id">{{ script.id }}</td>
+                <td>{{ script.script_name }}</td>
+                <td class="script_path">{{ script.script_path }}</td>
+                <td>{{ script.service_name }}</td>
+                <td class="server_name">{{ script.server_name }}</td>
+                <td class="script_parameter">
+                    <select class="select_all">
+                        {% for parameter in script.script_parameter.all  %}
+                            <option value="{{ parameter }}">{{ parameter }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><a  class="btn btn-primary btn-xs build" onclick="document.getElementById('loading').style.display='';" role="button" >执行</a></td>
+{#                <td><input type="button"   class="btn btn-success btn-xs" onclick="test()"  value="提交数据" id="updata"></td>#}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

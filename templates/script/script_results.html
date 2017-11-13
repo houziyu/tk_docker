@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block body %}
+    <span style="color: red;font-size: 30px">{{ error }}</span>
+    <textarea disabled="disabled" style="height: 100%;width: 100%;border-style: solid;border-color: white;resize: none">
+        {{ result }}
+    </textarea>
+{% endblock %}
