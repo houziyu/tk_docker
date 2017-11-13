@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^log/now/$', views.LogNow, name='lognow'),
     url(r'^log/dump/$', views.LogDump, name='logdump'),
     url(r'^log/download/$', views.LogDownload, name='logdownload'),
+    url(r'^log/dir/$', views.LogDir, name='logdir'),
+    url(r'^log/dir/page/$', views.LogDirPage, name='logdirpage'),
 ]

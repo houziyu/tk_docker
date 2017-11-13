@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block extra-head-resources %}
+<script type="text/javascript" src="/static/js/id_numb.js"></script>
+{% endblock %}
+
+{% block body %}
+<table class="table table-bordered;table table-hover" style="margin-top: 10px">
+    <thead>
+        <tr>
+            <th>Ordinal number</th>
+            <th>Server Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in service_now %}
+                <tr>
+                    <td>id</td>
+                    <td><a href="/log/dir/page/?service_name={{ i }}">{{ i }}</a></td>
+                </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

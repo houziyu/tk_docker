@@ -5,6 +5,7 @@ from lib import config
 from django.utils.safestring import mark_safe
 import datetime
 import os,zipfile
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 def LogNow(request):
     # 接收前端传递参数进行计算返回渲染后的页面
@@ -51,6 +52,7 @@ def LogDump(request):
             docker_log_bak = DockerUpdateAllLog()
             return render(request, 'log/downandback.html', docker_log_bak)
         elif hostname and container_name:
+            print(hostname,container_name)
             docker_download_log_path = DockerUpdateALog(hostname=hostname,container_name=container_name)
             return render(request, 'log/downandback.html', docker_download_log_path)
         else:
@@ -84,27 +86,26 @@ def DockerUpdateAllLog():
 def DockerUpdateALog(hostname,container_name):
     # 某个容器的日志下载
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
-    docker_container_list = docker_container_all[hostname]
-    for i in docker_container_list:
+    for i in docker_container_all[hostname]:
         if i.name == container_name:
             service_name = i.name.split('-')[0]
             if i.status == 'running':
-                if service_name in config.service_name_list:
-                    log_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-                    service_log_path = '/logs/' + service_name + '-service/log_info.log'
-                    log_init = i.get_archive(service_log_path)
-                    log_str = str(log_init[0].data, encoding="utf-8")
-                    log_name = hostname + '-' + service_name + '-' + log_date + '.log'
-                    log_dir_master = config.service_name_list
-                    log_local_name = log_dir_master + '/'+'tmp/' + log_name
-                    print(log_local_name)
-                    log_file = open(log_local_name, 'a+')
-                    date_now = str(datetime.datetime.now())
-                    log_file.write('执行时间:' + date_now)
-                    log_file.write(log_str)
-                    log_file.close()
-                    return_results = {'return_results': log_local_name, 'log_name': log_name}
-                    return return_results
+                log_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+                print(log_date,service_name)
+                service_log_path = '/logs/' + service_name + '-service/log_info.log'
+                log_init = i.get_archive(service_log_path)
+                log_str = str(log_init[0].data, encoding="utf-8")
+                log_name = hostname + '-' + service_name + '-' + log_date + '.log'
+                log_dir_master = config.service_name_list
+                log_path = log_dir_master + '/'+'tmp/' + log_name
+                print(log_path)
+                log_file = open(log_path, 'a+')
+                date_now = str(datetime.datetime.now())
+                log_file.write('执行时间:' + date_now)
+                log_file.write(log_str)
+                log_file.close()
+                return_results = {'return_results': log_path, 'log_name': log_name}
+                return return_results
             else:
                 return_results = {'return_results': None, 'log_name': 'docker容器状态为exit，请检查！'}
                 return return_results
@@ -140,3 +141,36 @@ def readFile(filename, chunk_size=512):
                 yield c
             else:
                 break
+
+def LogDir(request):
+    if request.method == 'GET':
+        log_path = config.log_dir_master
+        service_name_all = []
+        list = os.listdir(log_path)
+        for line in list:
+            filepath = os.path.join(log_path, line)
+            if os.path.isdir(filepath):
+                service_name_all.append(line)
+        return render(request, 'log/logdir.html', {'service_now': service_name_all})
+
+
+def LogDirPage(request):
+    service_name = request.GET.get('service_name')
+    log_path = config.log_dir_master
+    service_name_path = log_path + '/' + service_name
+    all_file = []
+    for i in os.listdir(service_name_path):
+        file_path = service_name_path + '/' + i
+        if os.path.isfile(file_path):
+            all_file.append([i, file_path])
+    print(all_file)
+    all_file = sorted(all_file, key=lambda file_name: file_name[1])
+    paginator = Paginator(all_file, 10)  # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        contacts = paginator.page(1)
+    except EmptyPage:
+        contacts = paginator.page(paginator.num_pages)
+    return render(request, 'log/catdownlog.html', {"contacts": contacts, 'service_name': [service_name]})
