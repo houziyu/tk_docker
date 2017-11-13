@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect,HttpResponseRedirect
 from django.contrib.auth import authenticate,logout,login
 from lib import docker_main
+from django.contrib.auth.decorators import login_required
 
 def UserLogin(request):
     #用户登录验证
@@ -21,6 +22,7 @@ def UserLogin(request):
             errors = {'error': '用户名或者密码错误，请重新输入'}
             return render(request, 'login.html', errors)
 
+@login_required
 def Dashboard(request):
     #仪表盘
     DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()

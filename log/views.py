@@ -6,7 +6,9 @@ from django.utils.safestring import mark_safe
 import datetime
 import os,zipfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+@login_required
 def LogNow(request):
     # 接收前端传递参数进行计算返回渲染后的页面
     if request.method == 'GET':
@@ -41,6 +43,7 @@ def DockerLog(Hostname, ContainerName, FindTime):
                 results_all = bytes('此容器状态为exited,请检查', encoding="utf8")
                 return results_all
 
+@login_required
 def LogDump(request):
     # 当天日志的下载以及全部的日志备份
     if request.method == 'GET':
@@ -108,6 +111,7 @@ def DockerUpdateALog(hostname,container_name):
                 return_results = {'return_results': None, 'log_name': 'docker容器状态为exit，请检查！'}
                 return return_results
 
+@login_required
 def LogDownload(request):
     if request.method == 'GET':
         log_path = request.GET.get('log_path')
@@ -140,6 +144,7 @@ def readFile(filename, chunk_size=512):
             else:
                 break
 
+@login_required
 def LogDir(request):
     if request.method == 'GET':
         log_path = config.log_dir_master
@@ -151,7 +156,7 @@ def LogDir(request):
                 service_name_all.append(line)
         return render(request, 'log/logdir.html', {'service_now': service_name_all})
 
-
+@login_required
 def LogDirPage(request):
     service_name = request.GET.get('service_name')
     log_path = config.log_dir_master

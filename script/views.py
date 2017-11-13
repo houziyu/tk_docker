@@ -3,13 +3,17 @@ from  . import models
 import paramiko
 from django.utils.safestring import mark_safe
 from lib import config
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+@login_required
 def Script(request):
     #脚本首页的显示
     ScriptAll = models.script_data.objects.all()
     return render(request, 'script/script.html',context={'ScriptAll':ScriptAll})
 
+@login_required
 def ScriptExecution(request):
     #脚本数据接收执行
     script_id = request.GET.get('script_id')
