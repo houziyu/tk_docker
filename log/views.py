@@ -31,9 +31,10 @@ def DockerLog(Hostname, ContainerName, FindTime):
             if i.status == 'running':
                 if FindTime:
                     FindTime = int(FindTime)
-                    DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime)
+                    DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime,hours=-8)
                     print(DatetimeNow)
                     b_logs = i.logs(since=DatetimeNow)
+                    print(b_logs)
                     return b_logs
                 else:
                     b_logs = i.logs(tail=config.log_tail_line)
@@ -96,9 +97,8 @@ def DockerUpdateALog(hostname,container_name):
                 log_init = i.get_archive(service_log_path)
                 log_str = str(log_init[0].data, encoding="utf-8")
                 log_name = hostname + '-' + service_name + '-' + log_date + '.log'
-                log_dir_master = config.service_name_list
+                log_dir_master = config.log_dir_master
                 log_path = log_dir_master + '/'+'tmp/' + log_name
-                print(log_path)
                 log_file = open(log_path, 'a+')
                 date_now = str(datetime.datetime.now())
                 log_file.write('执行时间:' + date_now)
