@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div style="width:100%;height: 100%;background: white;">
+        <div style="height: 46px;border-bottom: 1px solid #e7e7e7">
+            <div style="float:left">
+                <form action="" method="get">
+                    <span style="border: 1px solid red">hostanme:{{ hostname }}|container_name:{{ container_name }}</span>
+                    <input type="hidden" name="hostname" value="{{ hostname }}">
+                    <input type="hidden" name="container_name" value="{{ container_name }}">
+                    <input name="find_time" type="number" placeholder="请输入分钟" style="height: 30px;width: 100px;border: 1px solid red">
+                    <input type="submit" value="查找"/>
+                </form>
+            </div>
+            <div style="float:right">
+                <form action="/update_log/" method="get">
+                    <input type="hidden" name="hostname" value="{{ hostname }}">
+                    <input type="hidden" name="container_name" value="{{ container_name }}">
+                    <input type="submit" value="下载文件"/>
+                </form>
+            </div>
+        </div>
+        <div style="height: 100%;width: 100%">
+            <textarea disabled="disabled" style="height: 100%;width: 100%;border-style: solid;border-color: white;resize: none">
+                {{ logs }}
+            </textarea>
+        </div>
+    </div>
+{% endblock %}

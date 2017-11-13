@@ -1,7 +1,9 @@
-from django.shortcuts import render,HttpResponse ,redirect
+from django.shortcuts import render,redirect,HttpResponseRedirect
 from django.contrib.auth import authenticate,logout,login
+from lib import docker_main
 
-def login_html(request):
+def UserLogin(request):
+    #用户登录验证
     errors = {}
     if request.method == 'GET':
         return render(request, 'login.html')
@@ -19,4 +21,13 @@ def login_html(request):
             errors = {'error': '用户名或者密码错误，请重新输入'}
             return render(request, 'login.html', errors)
 
-# Create your views here.
+def Dashboard(request):
+    #仪表盘
+    DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
+    print(DockerContainerAll)
+    return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll})
+
+def UserLogout(request):
+    #用户登出
+    logout(request)
+    return HttpResponseRedirect("/")

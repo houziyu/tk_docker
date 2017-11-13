@@ -17,7 +17,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.UserLogin, name='login'),
-    url(r'^dashboard/$', views.Dashboard, name='dashboard'),
-    url(r'^logout/$', views.UserLogout, name='logout'),
+    url(r'^script/$', views.Script, name='script'),
+    url(r'^script/execution/$', views.ScriptExecution),
 ]

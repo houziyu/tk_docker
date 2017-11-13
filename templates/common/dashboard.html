@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block extra-head-resources %}
+<script type="text/javascript" src="/static/js/id_numb.js"></script>
+{% endblock %}
+{% block body %}
+<table class="table table-bordered;table table-hover" style="margin-top: 10px">
+    <thead>
+        <tr>
+            <th>Ordinal number</th>
+            <th>Host Name</th>
+            <th>Container Name</th>
+            <th>Image Name</th>
+            <th>Short Id</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hostname,vale in DockerContainerAll.items %}
+            {% for i in vale %}
+                <tr>
+                    <td>id</td>
+                    <td>{{ hostname }}</td>
+                    <td><a href="/log/now/?hostname={{ hostname }}&container_name={{ i.name }}">{{ i.name }}</a></td>
+                    <td>{{ i.image.tags|last }}</td>
+                    <td>{{ i.short_id}}</td>
+                    <td>{{ i.status }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
