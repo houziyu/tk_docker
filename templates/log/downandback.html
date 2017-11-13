@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% if return_results == None %}
+        <a href="{% url 'dashboard' %} ">{{ log_name }}</a>
+    {% elif log_name == None %}
+        <a href="{% url 'dashboard' %} ">{{ return_results }}</a>
+    {% else  %}
+        <a href="/log/download/?log_path={{ return_results }}&log_name={{ log_name }}">{{ log_name }}</a>
+    {% endif %}
+{% endblock %}

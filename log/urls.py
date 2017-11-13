@@ -19,4 +19,5 @@ from . import views
 urlpatterns = [
     url(r'^log/now/$', views.LogNow, name='lognow'),
     url(r'^log/dump/$', views.LogDump, name='logdump'),
+    url(r'^log/download/$', views.LogDownload, name='logdownload'),
 ]
