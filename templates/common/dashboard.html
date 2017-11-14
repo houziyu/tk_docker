@@ -23,7 +23,14 @@
                     <td><a href="/log/now/?hostname={{ hostname }}&container_name={{ i.name }}">{{ i.name }}</a></td>
                     <td>{{ i.image.tags|last }}</td>
                     <td>{{ i.short_id}}</td>
-                    <td>{{ i.status }}</td>
+                    {% if i.status == 'running' %}
+                        <td style="padding: 1px"><span class="btn btn-success" style="cursor:default;border-radius:50px;width: 75px">{{ i.status }}</span></td>
+                    {% elif i.status == 'exited'%}
+                        <td style="padding: 1px"><span class="btn btn-warning" style="cursor:default;border-radius:50px;width: 75px">{{ i.status }}</span></td>
+                    {% else %}
+                        <td>{{ i.status }}</td>
+                    {% endif %}
+
                 </tr>
             {% endfor %}
         {% endfor %}

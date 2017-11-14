@@ -23,6 +23,9 @@ def cron_dump_log():
                         log_file.write('执行时间:' + log_date)
                         log_file.write(log_str)
                         log_file.close()
+                        crontab_log = open('~/django_crontab.log', 'a+')
+                        crontab_log.write(hostname + '-' + service_name + '-' + log_date + '.' + str(num) + '.log' + 'is ok')
+                        crontab_log.close()
                         num += 1
                 except BaseException:
                     pass

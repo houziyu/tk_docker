@@ -30,18 +30,14 @@ def DockerLog(Hostname, ContainerName, FindTime):
     ContainerAll = DockerContainerAll[Hostname]
     for i in ContainerAll:
         if i.name == ContainerName:
-            if i.status == 'running':
-                if FindTime:
-                    FindTime = int(FindTime)
-                    DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime,hours=-8)
-                    b_logs = i.logs(since=DatetimeNow)
-                    return b_logs
-                else:
-                    b_logs = i.logs(tail=config.log_tail_line)
-                    return b_logs
+            if FindTime:
+                FindTime = int(FindTime)
+                DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime,hours=-8)
+                b_logs = i.logs(since=DatetimeNow)
+                return b_logs
             else:
-                results_all = bytes('此容器状态为exited,请检查', encoding="utf8")
-                return results_all
+                b_logs = i.logs(tail=config.log_tail_line)
+                return b_logs
 
 @login_required
 def LogDump(request):
