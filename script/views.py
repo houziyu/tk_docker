@@ -17,6 +17,7 @@ def Script(request):
 def ScriptExecution(request):
     #脚本数据接收执行
     script_id = request.GET.get('script_id')
+    print(script_id)
     script_parameter = request.GET.get('script_parameter')
     script_status = models.script_data.objects.filter(id=script_id).all()[0].status
     if script_status == 1 :
