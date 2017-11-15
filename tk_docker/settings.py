@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('0 1 * * *', 'log.cron_dump_log.cron_dump_log'),
+    ('0 1 * * *', 'log.cron_dump_log.cron_dump_log',[],{},'>> /var/django_cron.log'),
     # ('* * * * *', 'main.cron_download_log.download_status_data')
 ]
 
