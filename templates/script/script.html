@@ -33,7 +33,7 @@ $(function(){
                 <td class="server_name">{{ script.server_name }}</td>
                 <td class="script_parameter">
                     <select class="select_all">
-                        {% for parameter in script.script_parameter.all  %}
+                        {% for parameter in script.script_parameter.all %}
                             <option value="{{ parameter }}">{{ parameter }}</option>
                         {% endfor %}
                     </select>

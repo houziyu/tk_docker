@@ -15,13 +15,19 @@ def LogNow(request):
         FindTime = ''
         Hostname = request.GET.get('hostname')
         ContainerName = request.GET.get('container_name')
-        if request.GET.get('find_time'):
-            FindTime = request.GET.get('find_time')
-        logs = DockerLog(Hostname, ContainerName, FindTime)
-        logs_str = mark_safe(str(logs, encoding="utf-8"))
-        info = {'logs': logs_str, 'hostname': Hostname, 'container_name': ContainerName}
-        return render(request, 'log/lognow.html', info)
-        # 获取到了容器的name 然后去lib中搜索name的容器然后进行日志打印
+        log_type = request.GET.get('log_type')
+        if log_type == 'log_info':
+            if request.GET.get('find_time'):
+                FindTime = request.GET.get('find_time')
+            logs = DockerLog(Hostname, ContainerName, FindTime)
+            logs_str = mark_safe(str(logs, encoding="utf-8"))
+            info = {'logs': logs_str, 'hostname': Hostname, 'container_name': ContainerName}
+            return render(request, 'log/lognow.html', info)
+            # 获取到了容器的name 然后去lib中搜索name的容器然后进行日志打印
+        elif log_type == 'log_error':
+            docker_download_log_path = DockerUpdateALog(Hostname, ContainerName, log_type)
+            return render(request, 'log/downandback.html', docker_download_log_path)
+
     return HttpResponse('ok')
 
 def DockerLog(Hostname, ContainerName, FindTime):
@@ -46,12 +52,13 @@ def LogDump(request):
         all_log = request.GET.get('all_log')
         hostname = request.GET.get('hostname')
         container_name = request.GET.get('container_name')
+        log_type = request.GET.get('log_type')
         if all_log:
             docker_log_bak = DockerUpdateAllLog()
             return render(request, 'log/downandback.html', docker_log_bak)
-        elif hostname and container_name:
+        elif hostname and container_name and log_type:
             print(hostname,container_name)
-            docker_download_log_path = DockerUpdateALog(hostname=hostname,container_name=container_name)
+            docker_download_log_path = DockerUpdateALog(hostname=hostname,container_name=container_name,log_type=log_type)
             return render(request, 'log/downandback.html', docker_download_log_path)
         else:
             errors = {'return_results': '参数传递有错误！请检查!', 'log_name': None}
@@ -64,15 +71,15 @@ def DockerUpdateAllLog():
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all:
         for y in docker_container_all[i]:
-            service_name = y.name.split('-')[0]
+            service_name = y.name[:-5]
             if y.status == 'running':
                 if service_name in config.service_name_list:
                     log_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                    service_log_path = '/logs/' + service_name + '-service/log_info.log'
+                    service_log_path = '/logs/' + service_name + '/log_info.log'
                     log_init = y.get_archive(service_log_path)
                     log_str = str(log_init[0].data, encoding="utf-8")
                     log_dir_master = config.log_dir_master
-                    log_local_name = log_dir_master +'/'+ service_name+'-service' + '/update/'+'update'+ i + '-' + service_name + '-' + log_date + '.log'
+                    log_local_name = log_dir_master +'/'+ service_name + '/update/'+'update'+ i + '-' + service_name + '-' + log_date + '.log'
                     log_file = open(log_local_name, 'a+')
                     date_now = str(datetime.datetime.now())
                     log_file.write('执行时间:' + date_now)
@@ -81,19 +88,20 @@ def DockerUpdateAllLog():
     return_results = {'return_results': '!备份成功!返回主页!', 'log_name': None}
     return return_results
 
-def DockerUpdateALog(hostname,container_name):
+def DockerUpdateALog(hostname,container_name,log_type):
     # 某个容器的日志下载
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all[hostname]:
         if i.name == container_name:
-            service_name = i.name.split('-')[0]
+            service_name = i.name[:-5]
             if i.status == 'running':
                 log_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-                print(log_date,service_name)
-                service_log_path = '/logs/' + service_name + '-service/log_info.log'
+                print(log_date,service_name,log_type)
+                service_log_path = '/logs/' + service_name + '/'+log_type+'.log'
+                print('/logs/' + service_name + '/'+log_type+'.log')
                 log_init = i.get_archive(service_log_path)
                 log_str = str(log_init[0].data, encoding="utf-8")
-                log_name = hostname + '-' + service_name + '-' + log_date + '.log'
+                log_name = hostname + '-' + service_name + '-' + log_date + '-' +  log_type + '.log'
                 log_dir_master = config.log_dir_master
                 log_path = log_dir_master + '/'+'tmp/' + log_name
                 log_file = open(log_path, 'a+')

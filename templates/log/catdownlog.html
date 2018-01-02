@@ -1,43 +1,23 @@
-
 {% extends 'base.html' %}
-{#{% load dao_templatetages %}#}
-{% block extra-head-resources %}
-<script type="text/javascript" src="/static/js/id_numb.js"></script>
-{% endblock %}
-
 {% block body %}
 <table class="table table-bordered;table table-hover" style="margin-top: 10px">
     <thead>
         <tr>
-            <th>Ordinal number</th>
-            <th>File Name</th>
-            <th>File Path</th>
+            <th>Service Name</th>
+            <th>Service Status</th>
         </tr>
     </thead>
     <tbody>
-        {% for i in contacts %}
-                <tr>
-                    <td>id</td>
-                    <td><a href='/log/download/?log_name={{ i.0 }}&log_path={{ i.1 }}'>{{ i.0 }}</a></td>
-                    <td>{{ i.1 }}</td>
-                </tr>
+        {% for key,value in service_status_dict.items %}
+            <tr>
+                <td>
+                    <div> {{ key }}</div>
+                </td>
+                <td>
+                    <div>{{ value }}</div>
+                </td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
-{% for i in service_name %}
-<nav style="position: fixed;bottom: 0;text-align: center;">
-    <ul class="pager">
-        {% if contacts.has_previous %}
-            <li><a href="?page={{ contacts.previous_page_number }}&service_name={{ i }}">上一页</a></li>
-        {% endif %}
-            <span class="current">
-                Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}
-            </span>
-        {% if contacts.has_next %}
-            <li><a href="?page={{ contacts.next_page_number }}&service_name={{ i }}">下一页</a></li>
-        {% endif %}
-    </ul>
-</nav>
-{% endfor %}
-
 {% endblock %}
