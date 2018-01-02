@@ -32,7 +32,7 @@ def Dashboard(request):
     #仪表盘
     DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
     print(DockerContainerAll)
-    return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll,'environment':config.env_statement})
+    return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll})
 
 def UserLogout(request):
     #用户登出
