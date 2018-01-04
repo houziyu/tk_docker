@@ -7,6 +7,7 @@ import datetime
 import os,zipfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from collections import deque
 # Create your views here.
 @login_required
 def LogNow(request):
@@ -21,14 +22,20 @@ def LogNow(request):
                 FindTime = request.GET.get('find_time')
             logs = DockerLog(Hostname, ContainerName, FindTime)
             logs_str = mark_safe(str(logs, encoding="utf-8"))
-            info = {'logs': logs_str, 'hostname': Hostname, 'container_name': ContainerName}
+            info = {'logs': logs_str,'log_type':log_type ,'hostname': Hostname, 'container_name': ContainerName}
             return render(request, 'log/lognow.html', info)
             # 获取到了容器的name 然后去lib中搜索name的容器然后进行日志打印
         elif log_type == 'log_error':
             docker_download_log_path = DockerUpdateALog(Hostname, ContainerName, log_type)
-            return render(request, 'log/downandback.html', docker_download_log_path)
-
-    return HttpResponse('ok')
+            f = open(docker_download_log_path['return_results'])
+            log_format = f.readlines()
+            log_format = deque(log_format, 500)
+            log_all = ''
+            for i in log_format:
+                log_all = log_all + i
+            print(log_all)
+            info = {'logs': log_all,'log_type':log_type , 'hostname': Hostname, 'container_name': ContainerName}
+            return render(request, 'log/lognow.html', info)
 
 def DockerLog(Hostname, ContainerName, FindTime):
     # 调取所有容器判断健康度，然后返回日志.
@@ -59,6 +66,7 @@ def LogDump(request):
         elif hostname and container_name and log_type:
             print(hostname,container_name)
             docker_download_log_path = DockerUpdateALog(hostname=hostname,container_name=container_name,log_type=log_type)
+            print(docker_download_log_path)
             return render(request, 'log/downandback.html', docker_download_log_path)
         else:
             errors = {'return_results': '参数传递有错误！请检查!', 'log_name': None}
@@ -106,7 +114,7 @@ def DockerUpdateALog(hostname,container_name,log_type):
                 log_path = log_dir_master + '/'+'tmp/' + log_name
                 log_file = open(log_path, 'a+')
                 date_now = str(datetime.datetime.now())
-                log_file.write('执行时间:' + date_now)
+                log_file.write('执行时间:' + date_now+'\n')
                 log_file.write(log_str)
                 log_file.close()
                 return_results = {'return_results': log_path, 'log_name': log_name}

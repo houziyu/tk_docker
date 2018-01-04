@@ -4,18 +4,20 @@
         <div style="height: 46px;border-bottom: 1px solid #e7e7e7">
             <div style="float:left">
                 <form action="" method="get">
-                    <span style="border: 1px solid red">hostanme:{{ hostname }}|container_name:{{ container_name }}</span>
+                    <span style="border: 1px solid red">hostanme:{{ hostname }}|container_name:{{ container_name }}|log_type:{{ log_type }}</span>
                     <input type="hidden" name="hostname" value="{{ hostname }}">
                     <input type="hidden" name="container_name" value="{{ container_name }}">
+                    {% if log_type == 'log_info' %}
                     <input name="find_time" type="number" placeholder="请输入分钟" style="height: 30px;width: 100px;border: 1px solid red">
                     <input type="submit" value="查找"/>
+                    {% endif %}
                 </form>
             </div>
             <div style="float:right">
                 <form action="/log/dump/" method="get">
                     <input type="hidden" name="hostname" value="{{ hostname }}">
                     <input type="hidden" name="container_name" value="{{ container_name }}">
-                    <input type="hidden" name="log_type" value="log_info">
+                    <input type="hidden" name="log_type" value="{{ log_type }}">
                     <input type="submit" value="下载文件"/>
                 </form>
             </div>
