@@ -79,7 +79,7 @@ def DockerUpdateAllLog():
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all:
         for y in docker_container_all[i]:
-            service_name = i.name.split('-')[0]
+            service_name = y.name.split('-')[0]
             service_name = service_name + '-service'
             if y.status == 'running':
                 if service_name in config.service_name_list:
