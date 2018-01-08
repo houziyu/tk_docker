@@ -79,7 +79,8 @@ def DockerUpdateAllLog():
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all:
         for y in docker_container_all[i]:
-            service_name = y.name[:-5]
+            service_name = i.name.split('-')[0]
+            service_name = service_name + '-service'
             if y.status == 'running':
                 if service_name in config.service_name_list:
                     log_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -101,7 +102,9 @@ def DockerUpdateALog(hostname,container_name,log_type):
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all[hostname]:
         if i.name == container_name:
-            service_name = i.name[:-5]
+            service_name = i.name.split('-')[0]
+            service_name = service_name + '-service'
+            print('service_name')
             if i.status == 'running':
                 log_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
                 print(log_date,service_name,log_type)
