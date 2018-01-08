@@ -80,9 +80,9 @@ def DockerUpdateAllLog():
     for i in docker_container_all:
         for y in docker_container_all[i]:
             service_name = y.name.split('-')[0]
-            service_name = service_name + '-service'
             if y.status == 'running':
                 if service_name in config.service_name_list:
+                    service_name = service_name + '-service'
                     log_date = datetime.datetime.now().strftime("%Y-%m-%d")
                     service_log_path = '/logs/' + service_name + '/log_info.log'
                     log_init = y.get_archive(service_log_path)
