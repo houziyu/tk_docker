@@ -1,8 +1,7 @@
-from django.shortcuts import render,redirect,HttpResponse,HttpResponseRedirect
+from django.shortcuts import render,redirect,HttpResponseRedirect
 from django.contrib.auth import authenticate,logout,login
 from lib import docker_main
 from django.contrib.auth.decorators import login_required
-from lib import config
 
 def UserLogin(request):
     #用户登录验证
@@ -30,8 +29,10 @@ def UserLogin(request):
 @login_required
 def Dashboard(request):
     #仪表盘
-    DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
-    print(DockerContainerAll)
+    type = request.GET.get('type')
+    DockerContainerAll = docker_main.DockerInitial().DockerContainerNow()
+    if type:
+        DockerContainerAll = sorted(DockerContainerAll, key=lambda k: k[type])
     return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll})
 
 def UserLogout(request):

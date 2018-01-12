@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponse
-from  . import models
+from . import models
 import paramiko
 from django.utils.safestring import mark_safe
 from lib import config
