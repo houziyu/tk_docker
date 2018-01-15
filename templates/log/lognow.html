@@ -7,6 +7,7 @@
                     <span style="border: 1px solid red">hostanme:{{ hostname }}|container_name:{{ container_name }}|log_type:{{ log_type }}</span>
                     <input type="hidden" name="hostname" value="{{ hostname }}">
                     <input type="hidden" name="container_name" value="{{ container_name }}">
+                    <input type="hidden" name="log_type" value="{{ log_type }}">
                     {% if log_type == 'log_info' %}
                     <input name="find_time" type="number" placeholder="请输入分钟" style="height: 30px;width: 100px;border: 1px solid red">
                     <input type="submit" value="查找"/>
