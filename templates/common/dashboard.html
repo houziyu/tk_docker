@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
-{% block extra-head-resources %}
-<script type="text/javascript" src="/static/js/id_numb.js"></script>
-{% endblock %}
 {% block body %}
 <table class="table table-bordered;table table-hover" style="margin-top: 10px">
     <thead>
         <tr>
-            <th>Ordinal Number</th>
             <th>Host Name<a href="/dashboard/?type=hostname">&uarr;️</a></th>
             <th>Container Name<a href="/dashboard/?type=name">&uarr;️</a></th>
             <th>Image Name<a href="/dashboard/?type=image">&uarr;️</a></th>
@@ -18,7 +14,6 @@
     <tbody>
         {% for i in DockerContainerAll %}
             <tr>
-                <td>id</td>
                 <td>{{ i.hostname }}</td>
 {#                <td style="word-break:break-all; width:200px; overflow:auto;">dnfjhkdhuisfduifkjsdfkjhsdfkjhkjsdhfhkjsdfkjhsdfkjhsdfkjhsdkfjhsdkfjhskdfhjksdjhfkshjksfj</td>#}
                 <td >{{ i.name }}</td>
