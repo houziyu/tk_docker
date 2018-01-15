@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('0 1 * * *', 'log.cron_dump_log.cron_dump_log',[],{},'>> /var/django_cron.log'),
+    ('0 1 * * *', 'log.cron_dump_log.cron_dump_info_log'),
+    ('5 1 * * *', 'log.cron_dump_log.cron_dump_error_log'),
     # ('* * * * *', 'main.cron_download_log.download_status_data')
 ]
 
@@ -124,7 +125,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

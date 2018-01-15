@@ -162,20 +162,21 @@ def readFile(filename, chunk_size=512):
 @login_required
 def LogDir(request):
     if request.method == 'GET':
-        log_path = config.log_dir_master
+        log_list = config.service_name_list
         service_name_all = []
-        list = os.listdir(log_path)
-        for line in list:
-            filepath = os.path.join(log_path, line)
-            if os.path.isdir(filepath):
-                service_name_all.append(line)
+        for i in log_list:
+            y = i + '-service'
+            service_name_all.append(y)
+        print(service_name_all)
         return render(request, 'log/logdir.html', {'service_now': service_name_all})
 
 @login_required
 def LogDirPage(request):
     service_name = request.GET.get('service_name')
+    log_type = request.GET.get('log_type')
+    print(service_name,log_type)
     log_path = config.log_dir_master
-    service_name_path = log_path + '/' + service_name
+    service_name_path = log_path + '/' + service_name + '/' + log_type
     all_file = []
     for i in os.listdir(service_name_path):
         file_path = service_name_path + '/' + i

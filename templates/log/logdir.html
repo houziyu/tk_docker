@@ -10,13 +10,17 @@
         <tr>
             <th>Ordinal number</th>
             <th>Server Name</th>
+            <th>Log</th>
         </tr>
     </thead>
     <tbody>
         {% for i in service_now %}
                 <tr>
                     <td>id</td>
-                    <td><a href="/log/dir/page/?service_name={{ i }}">{{ i }}</a></td>
+                    <td>{{ i }}</td>
+                    <td><a href="/log/dir/page/?service_name={{ i }}&log_type=info" class="btn btn-primary btn-xs build" >info</a>
+                    <a href="/log/dir/page/?service_name={{ i }}&log_type=error" class="btn btn-danger btn-xs build">error</a>
+                    <a href="/log/dir/page/?service_name={{ i }}&log_type=update" class="btn btn-info btn-xs build">update</a></td>
                 </tr>
         {% endfor %}
     </tbody>
