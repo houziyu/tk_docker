@@ -11,7 +11,23 @@ from django.contrib.auth.decorators import login_required
 def Script(request):
     #脚本首页的显示
     ScriptAll = models.script_data.objects.all()
-    return render(request, 'script/script.html',context={'ScriptAll':ScriptAll})
+    ScriptAllDictionary=[]
+    for i in ScriptAll:
+        single = {}
+        # for i in ScriptAll:
+        parameter=[]
+        single['id'] = i.id
+        single['script_name']=i.script_name
+        single['script_path'] = i.script_path
+        single['service_name'] = i.service_name
+        single['server_name'] = i.server_name
+        for y in i.script_parameter.values_list():
+            parameter.append(y[1])
+        parameter = list(reversed(parameter))
+        single['parameter'] = parameter
+        ScriptAllDictionary.append(single)
+    print(ScriptAllDictionary)
+    return render(request, 'script/script.html',context={'ScriptAllDictionary':ScriptAllDictionary})
 
 @login_required
 def ScriptExecution(request):
