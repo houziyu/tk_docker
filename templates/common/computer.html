@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block body %}
+<table class="table table-bordered;table table-hover" style="margin-top: 10px">
+    <thead>
+        <tr>
+            <th>Host Name</th>
+            <th>Host Ip</th>
+            <th>Ssh Type</th>
+            <th>Docker Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in all_computer %}
+            <tr>
+                <td>{{ i.host_name }}</td>
+                <td >{{ i.host_ip }}</td>
+                <td>{{ i.host_ssh_type }}</td>
+                {% if i.docker_status == '1' %}
+                     <td>使用</td>
+                {% else %}
+                    <td>不使用</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

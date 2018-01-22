@@ -1,4 +1,5 @@
 from django.db import models
+from common.models import host_information
 
 # Create your models here.
 
@@ -13,7 +14,7 @@ class script_data(models.Model):
     script_name = models.CharField(max_length=40)
     script_path = models.CharField(max_length=100)
     service_name = models.CharField(max_length=40)
-    server_name = models.CharField(max_length=40)
+    server_name = models.ForeignKey(host_information,on_delete=models.CASCADE,)
     script_parameter = models.ManyToManyField(all_parameter,blank=True)
     status = models.IntegerField(choices=[(1, '空闲中'),(2, '进行中'),],default=1)
     def __str__(self):

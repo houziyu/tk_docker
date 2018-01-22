@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^$', views.UserLogin, name='login'),
     url(r'^dashboard/$', views.Dashboard, name='dashboard'),
     url(r'^logout/$', views.UserLogout, name='logout'),
+    url(r'^computer/$', views.Computer, name='computer'),
 ]

@@ -13,34 +13,34 @@
 <body>
 <div id="loading"  style="display:none">
     <div class="spinner">
-      <div class="rect1"></div>
-      <div class="rect2"></div>
-      <div class="rect3"></div>
-      <div class="rect4"></div>
-      <div class="rect5"></div>
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
     </div>
 </div>
 
 <nav style="margin-bottom: auto" class="navbar navbar-default">
-  <div class="container-fluid">
+    <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <a class="navbar-brand" href="{% url 'dashboard' %}">clx运维后台系统</a>
-    </div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">clx运维后台系统</a>
+        </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }}<span class="caret"></span></a>
-          <ul class="dropdown-menu " role="menu" aria-labelledby="dLabel">
-              <li><a href="/log/dump/?all_log=all_log">日志备份</a></li>
-              <li><a href="{% url 'logout' %}">logout</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu " role="menu" aria-labelledby="dLabel">
+                        <li><a href="/log/dump/?all_log=all_log">日志备份</a></li>
+                        <li><a href="{% url 'logout' %}">logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
 </nav>
 <div class="container-fluid">
     <div class="row">
@@ -48,6 +48,9 @@
             <ul class="nav">
                 <li>
                     <a style="border-bottom:1px solid #e5e5e5;" href="{% url 'dashboard' %}">docker仪表盘</a>
+                </li>
+                <li>
+                    <a style="border-bottom:1px solid #e5e5e5;" href="{% url 'computer' %}">主机列表</a>
                 </li>
                 <li>
                     <a style="border-bottom:1px solid #e5e5e5;" href="{% url 'script' %}">脚本</a>
