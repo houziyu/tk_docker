@@ -138,3 +138,4 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'statics'),
 )
+VERIFICATION_CODE_IMGS_DIR ='./statics/verify'

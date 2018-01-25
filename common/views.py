@@ -5,29 +5,48 @@ from django.contrib.auth.decorators import login_required
 from lib import config
 from common import models
 
+from django.core.cache import cache
+import datetime,os,random,string
+from tk_docker import settings
+from common import verify
 def UserLogin(request):
     #用户登录验证
     errors = {}
-    if request.method == 'GET':
-        ins_env=config.ins_env
-        return render(request, 'login.html', {'ins_env': ins_env})
-    elif request.method == 'POST':
+    ins_env=config.ins_env
+    today_str = datetime.date.today().strftime("%Y%m%d")
+    verify_code_img_path = "%s/%s" % (settings.VERIFICATION_CODE_IMGS_DIR,
+                                      today_str)
+    if not os.path.isdir(verify_code_img_path):
+        os.makedirs(verify_code_img_path, exist_ok=True)
+    print("session:", request.session.session_key)
+    # print("session:",request.META.items())
+    random_filename = "".join(random.sample(string.ascii_lowercase, 4))
+    random_code = verify.gene_code(verify_code_img_path, random_filename)
+    cache.set(random_filename, random_code, 30)
+    if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username, password)
-        user = authenticate(username=username, password=password)
-        if user:
-            print('登录完成')
-            login(request, user)
-            next_url = request.GET.get('next')
-            print(next_url)
-            if next_url:
-                return redirect(next_url)
-            return redirect('/dashboard')
+        _verify_code = request.POST.get('verify_code')
+        _verify_code_key = request.POST.get('verify_code_key')
+        print("verify_code_key:", _verify_code_key)
+        print("verify_code:", _verify_code)
+        if cache.get(_verify_code_key) == _verify_code:
+            print("code verification pass!")
+            user = authenticate(username=username, password=password)
+            if user:
+                print('登录完成')
+                login(request, user)
+                next_url = request.GET.get('next')
+                print(next_url)
+                if next_url:
+                    return redirect(next_url)
+                return redirect('/dashboard')
+            else:
+                errors["error"] = '用户名或者密码错误，请重新输入'
         else:
-            print(errors)
-            errors = {'error': '用户名或者密码错误，请重新输入'}
-            return render(request, 'login.html', errors)
+            errors['error'] = "验证码错误!"
+    return render(request, 'login.html', {'ins_env': ins_env, "filename": random_filename, "today_str": today_str,"errors":errors})
+
 
 @login_required
 def Dashboard(request):

@@ -27,14 +27,22 @@
         <dl class="admin_login">
             <dt>
                 <strong>clx后台管理系统</strong>
-                <span style="font-size: 15px;color: #00CCFF">{{ ins_env }}</span>
-                <span style="font-size: 15px;color: #00CCFF">{{ error }}</span>
+                {% if errors %}
+                    <span style="font-size: 15px;color: #00CCFF">{{ errors.error }}</span>
+                {% else %}
+                    <span style="font-size: 15px;color: #00CCFF">{{ ins_env }}</span>
+                {% endif %}
             </dt>
             <dd class="user_icon">
                 <input name="username" type="text" placeholder="用户名" class="login_txtbx">
             </dd>
             <dd class="pwd_icon">
                 <input name="password" type="password" placeholder="密码" class="login_txtbx">
+            </dd>
+            <dd class="val_icon">
+                <input style="width: 40%" name="verify_code" maxlength='4' type="text" placeholder="验证码" class="login_txtbx">
+                <input  type="hidden" name="verify_code_key" value="{{ filename }}" >
+                <a href="/"><img style="margin-left: 20px" height="40px" src="/static/verify/{{ today_str }}/{{ filename }}.png"></a>
             </dd>
             <dd>
                 <button type="submit"  class="submit_btn">登陆</button>
