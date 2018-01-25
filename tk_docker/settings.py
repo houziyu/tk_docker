@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'wa)b=efp4+6n4u#_+vezmi3&k%-6vqnlt(#wz_fs7%hk!0^reb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -138,4 +138,3 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'statics'),
 )
-VERIFICATION_CODE_IMGS_DIR ='./statics/verify'

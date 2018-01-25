@@ -7,4 +7,3 @@ service_name_list=['manage','job','trace','payment','message','user','order']
 log_dir_master  = '/Users/yunque/log_everyone_bak'
 # Log on the host directory
 ins_env='开发环境'
-font_path = '../statics/font/Arial.ttf'
