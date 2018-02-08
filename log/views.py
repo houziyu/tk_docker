@@ -197,7 +197,7 @@ def LogDirPage(request):
         all_file = sorted(all_file, key=lambda file_name: file_name[1])
     paginator = Paginator(all_file, 13)  # Show 25 contacts per page
     page = request.GET.get('page')
-    information = [{'service_name': service_name, 'log_type': log_type}]
+    information = [{'service_name': service_name, 'log_type': log_type,'sort':sort}]
     try:
         contacts = paginator.page(page)
     except PageNotAnInteger:

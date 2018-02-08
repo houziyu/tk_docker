@@ -28,6 +28,17 @@
 {% for i in information %}
 <nav style="position: fixed;bottom: 0;text-align: center;">
     <ul class="pager">
+    {% if i.sort %}
+        {% if contacts.has_previous %}
+            <li><a href="?page={{ contacts.previous_page_number }}&service_name={{ i.service_name }}&log_type={{ i.log_type }}&sort={{ i.sort }}">上一页</a></li>
+        {% endif %}
+            <span class="current">
+                Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}
+            </span>
+        {% if contacts.has_next %}
+            <li><a href="?page={{ contacts.next_page_number }}&service_name={{ i.service_name }}&log_type={{ i.log_type }}&sort={{ i.sort }}">下一页</a></li>
+        {% endif %}
+    {% else %}
         {% if contacts.has_previous %}
             <li><a href="?page={{ contacts.previous_page_number }}&service_name={{ i.service_name }}&log_type={{ i.log_type }}">上一页</a></li>
         {% endif %}
@@ -37,6 +48,8 @@
         {% if contacts.has_next %}
             <li><a href="?page={{ contacts.next_page_number }}&service_name={{ i.service_name }}&log_type={{ i.log_type }}">下一页</a></li>
         {% endif %}
+    {% endif %}
+
     </ul>
 </nav>
 {% endfor %}
