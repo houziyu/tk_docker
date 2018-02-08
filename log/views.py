@@ -3,7 +3,7 @@ from django.http import StreamingHttpResponse
 from lib import docker_main
 from lib import config
 from django.utils.safestring import mark_safe
-import datetime
+import datetime,time
 import os,zipfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -174,19 +174,30 @@ def LogDir(request):
 def LogDirPage(request):
     service_name = request.GET.get('service_name')
     log_type = request.GET.get('log_type')
-    print(service_name,log_type)
+    sort = request.GET.get('sort')
+    print(sort)
+    # if not sort:
+    #     sort = '1'
+
+    print(service_name, log_type)
     log_path = config.log_dir_master
     service_name_path = log_path + '/' + service_name + '/' + log_type
     all_file = []
     for i in os.listdir(service_name_path):
         file_path = service_name_path + '/' + i
         if os.path.isfile(file_path):
-            all_file.append([i, file_path])
-    print(all_file)
-    all_file = sorted(all_file, key=lambda file_name: file_name[1])
+            file_create_time = os.path.getctime(file_path)
+            time_struct = time.localtime(file_create_time)
+            time_24 = time.strftime('%Y-%m-%d %H:%M:%S', time_struct)
+            all_file.append([i, file_path,time_24])
+    print('all_file:',all_file)
+    if sort:
+        all_file = sorted(all_file, key=lambda file_name: file_name[2])
+    else:
+        all_file = sorted(all_file, key=lambda file_name: file_name[1])
     paginator = Paginator(all_file, 13)  # Show 25 contacts per page
     page = request.GET.get('page')
-    information = [{'service_name':service_name,'log_type':log_type}]
+    information = [{'service_name': service_name, 'log_type': log_type}]
     try:
         contacts = paginator.page(page)
     except PageNotAnInteger:
@@ -194,3 +205,27 @@ def LogDirPage(request):
     except EmptyPage:
         contacts = paginator.page(paginator.num_pages)
     return render(request, 'log/catdownlog.html', {"contacts": contacts, 'information': information})
+# @login_required
+# def LogDirPage(request):
+#     service_name = request.GET.get('service_name')
+#     log_type = request.GET.get('log_type')
+#     print(service_name,log_type)
+#     log_path = config.log_dir_master
+#     service_name_path = log_path + '/' + service_name + '/' + log_type
+#     all_file = []
+#     for i in os.listdir(service_name_path):
+#         file_path = service_name_path + '/' + i
+#         if os.path.isfile(file_path):
+#             all_file.append([i, file_path])
+#     print(all_file)
+#     all_file = sorted(all_file, key=lambda file_name: file_name[1])
+#     paginator = Paginator(all_file, 13)  # Show 25 contacts per page
+#     page = request.GET.get('page')
+#     information = [{'service_name':service_name,'log_type':log_type}]
+#     try:
+#         contacts = paginator.page(page)
+#     except PageNotAnInteger:
+#         contacts = paginator.page(1)
+#     except EmptyPage:
+#         contacts = paginator.page(paginator.num_pages)
+#     return render(request, 'log/catdownlog.html', {"contacts": contacts, 'information': information})

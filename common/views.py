@@ -14,8 +14,7 @@ def UserLogin(request):
     errors = {}
     ins_env=config.ins_env
     today_str = datetime.date.today().strftime("%Y%m%d")
-    verify_code_img_path = "%s/%s" % (settings.STATICFILES_DIRS[0]+'/verify',
-                                      today_str)
+    verify_code_img_path = "%s/%s" % (settings.STATICFILES_DIRS[0]+'/verify',today_str)
     if not os.path.isdir(verify_code_img_path):
         os.makedirs(verify_code_img_path, exist_ok=True)
     print("session:", request.session.session_key)

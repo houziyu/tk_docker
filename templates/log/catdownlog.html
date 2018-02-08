@@ -1,24 +1,26 @@
 {% extends 'base.html' %}
 {#{% load dao_templatetages %}#}
 {% block extra-head-resources %}
-<script type="text/javascript" src="/static/js/id_numb.js"></script>
+{#<script type="text/javascript" src="/static/js/id_numb.js"></script>#}
 {% endblock %}
 
 {% block body %}
 <table class="table table-bordered;table table-hover" style="margin-top: 10px">
     <thead>
         <tr>
-            <th>Ordinal number</th>
+{#            <th>Ordinal number</th>#}
             <th>File Name</th>
             <th>File Path</th>
+            <th>File Time<a href="{{ request.get_full_path }}&sort=filetime"><img src="/static/image/sort.png" height="20" width="20"></a></th>
         </tr>
     </thead>
     <tbody>
         {% for i in contacts %}
                 <tr>
-                    <td>id</td>
+{#                    <td>id</td>#}
                     <td><a href='/log/download/?log_name={{ i.0 }}&log_path={{ i.1 }}'>{{ i.0 }}</a></td>
                     <td>{{ i.1 }}</td>
+                    <td>{{ i.2 }}</td>
                 </tr>
         {% endfor %}
     </tbody>
