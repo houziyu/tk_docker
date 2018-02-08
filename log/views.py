@@ -192,9 +192,9 @@ def LogDirPage(request):
             all_file.append([i, file_path,time_24])
     print('all_file:',all_file)
     if sort:
-        all_file = sorted(all_file, key=lambda file_name: file_name[2])
+        all_file = sorted(all_file, key=lambda file_name: file_name[2], reverse=True)
     else:
-        all_file = sorted(all_file, key=lambda file_name: file_name[1])
+        all_file = sorted(all_file, key=lambda file_name: file_name[1], reverse=True)
     paginator = Paginator(all_file, 13)  # Show 25 contacts per page
     page = request.GET.get('page')
     information = [{'service_name': service_name, 'log_type': log_type,'sort':sort}]
