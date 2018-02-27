@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^dashboard/$', views.Dashboard, name='dashboard'),
     url(r'^logout/$', views.UserLogout, name='logout'),
     url(r'^computer/$', views.Computer, name='computer'),
+    url(r'^service_status/$', views.service_status, name='service_status'),
+    url(r'^service_status_detection/$', views.service_status_detection, name='service_status_detection'),
 ]

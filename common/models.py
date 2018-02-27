@@ -14,3 +14,13 @@ class host_information(models.Model):
     docker_status = models.CharField(max_length=40,choices=[('1', '使用'),('2', '不使用'),],default=2)
     def __str__(self):
         return self.host_name
+
+class service_status_detection(models.Model):
+    host_name = models.ForeignKey(host_information, on_delete=models.CASCADE, )
+    service_name = models.CharField(max_length=40)
+    url = models.CharField(max_length=100)
+    port = models.IntegerField()
+    url_status = models.CharField(max_length=40,choices=[('1', '健康'),('2', '异常'),],default=1)
+    port_status = models.CharField(max_length=40,choices=[('1', '健康'),('2', '异常'),],default=1)
+    def __str__(self):
+        return self.service_name

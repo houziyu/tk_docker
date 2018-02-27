@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block body %}
+<table class="table table-bordered;table table-hover" style="margin-top: 10px">
+    <thead>
+        <tr>
+            <th>Host Name</th>
+            <th>Url</th>
+            <th>Port</th>
+            <th>Url Status</th>
+            <th>Port Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in service_status_list %}
+            <tr>
+                <td>{{ i.host_name }}</td>
+                <td>{{ i.url }}</td>
+                <td>{{ i.port }}</td>
+{#                <td>{{ i.url_status }}</td>#}
+{#                <td>{{ i.port_status }}</td>#}
+                {% if i.url_status == '1' %}
+                     <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
+                {% else %}
+                    <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
+                {% endif %}
+                {% if i.port_status == '1' %}
+                     <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
+                {% else %}
+                    <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
