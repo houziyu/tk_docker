@@ -1,12 +1,10 @@
 import docker
-from lib import config
-import traceback
-from common import models
+from common import models as host_models
 
 class DockerInitial(object):
     #docker连接初始化操作
     def __init__(self):
-        hostall = models.host_information.objects.filter(docker_status=1).all()
+        hostall = host_models.host_information.objects.filter(docker_status=1).all()
         self.docker_all = {}
         for i in hostall:
                 self.docker_singleton = docker.DockerClient(base_url='tcp://%s:2375' % i.host_ip)

@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 CRONJOBS = [
     ('0 1 * * *', 'log.cron_dump_log.cron_dump_info_log'),
     ('5 1 * * *', 'log.cron_dump_log.cron_dump_error_log'),
-    # ('* * * * *', 'main.cron_download_log.download_status_data')
+    ('*/3 * * * *', 'log.cron_dump_log.check_service')
 ]
 
 MIDDLEWARE = [

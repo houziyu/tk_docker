@@ -1,6 +1,7 @@
 from lib.docker_main import DockerInitial
 import datetime
 from lib import config
+import requests
 
 #定时下拉备份日志 python3 manage.py crontab add  启动后记得添加上定时任务(python3 manage.py crontab remove)删除
 #备份info日志
@@ -56,3 +57,7 @@ def cron_dump_error_log():
                         num += 1
                 except BaseException:
                     pass
+
+#定时检查服务运行情况
+def check_service():
+    requests.get('http://127.0.0.1:8080/service_status_detection/')
