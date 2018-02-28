@@ -126,7 +126,7 @@ def service_status_detection(request):
     return HttpResponse(service_return)
 
 def url_detection(url):
-    html = requests.head(url)  # 用head方法去请求资源头部
+    html = requests.get(url)  # 用head方法去请求资源头部
     # print(html.status_code)  # 状态码
     http_status = html.status_code
     if url == 'null':
