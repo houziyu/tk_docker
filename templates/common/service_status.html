@@ -4,6 +4,7 @@
     <thead>
         <tr>
             <th>Host Name</th>
+            <th>Service Name</th>
             <th>Url</th>
             <th>Port</th>
             <th>Url Status</th>
@@ -14,6 +15,7 @@
         {% for i in service_status_list %}
             <tr>
                 <td>{{ i.host_name }}</td>
+                <td>{{ i.service_name }}</td>
                 <td>{{ i.url }}</td>
                 <td>{{ i.port }}</td>
 {#                <td>{{ i.url_status }}</td>#}

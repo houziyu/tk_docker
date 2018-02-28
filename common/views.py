@@ -80,6 +80,7 @@ def service_status(request):
     for i in service_status_all:
         a_servic = {}
         a_servic['id'] = i.id
+        a_servic['service_name'] = i.service_name
         a_servic['host_name'] = i.host_name.host_name
         a_servic['url'] = i.url
         a_servic['port'] = i.port
