@@ -127,7 +127,10 @@ def service_status_detection(request):
 def url_detection(url):
     html = requests.head(url)  # 用head方法去请求资源头部
     # print(html.status_code)  # 状态码
-    return html.status_code
+    http_status = html.status_code
+    if url == 'null':
+        http_status= 200
+    return http_status
 
 def port_detection(host_ip,port):
     sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
