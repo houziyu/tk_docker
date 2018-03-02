@@ -61,6 +61,7 @@ def Dashboard(request):
     else:
         return HttpResponse('请登录admin添加docker主机信息')
 
+@login_required
 def Computer(request):
     computer_all = models.host_information.objects.all()
     all_computer = []
@@ -74,6 +75,7 @@ def Computer(request):
     print(all_computer)
     return render(request, 'common/computer.html', {'all_computer': all_computer})
 
+@login_required
 def service_status(request):
     service_status_all = models.service_status_detection.objects.all()
     service_status_list = []
