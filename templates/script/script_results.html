@@ -1,7 +1,28 @@
 {% extends 'base.html' %}
 {% block body %}
-    <span style="color: red;font-size: 30px">{{ error }}</span>
-    <textarea disabled="disabled" style="height: 100%;width: 100%;border-style: solid;border-color: white;resize: none">
-        {{ result }}
+    {% if error %}
+        <span style="color: red;font-size: 30px">{{ error }}</span>
+    {% else %}
+        <script type="text/javascript">//<![CDATA[
+            $(function () {
+                var socket = new WebSocket("ws://" + window.location.host + "/scriptexecution/");
+                socket.onopen = function () {
+                    var script_id = document.getElementById('script_id').innerHTML;
+                    var script_parameter = document.getElementById('script_parameter').innerHTML;
+                    var script_info = '{\'script_id\':'+script_id+','+'\'script_parameter\':'+'\''+script_parameter+'\''+'}';
+                    console.log('WebSocket open');//成功连接上Websocket
+                    socket.send(script_info);//发送数据到服务端
+                };
+                socket.onmessage = function (e) {
+                    console.log('message: ' + e.data);//打印服务端返回的数据
+                    var ele = document.getElementById("message");
+                    ele.value = ele.value + e.data;
+                };
+            });
+        </script>
+    {% endif %}
+    <span id='script_id'  style="display: none">{{ script_info.script_id }}</span>
+    <span id='script_parameter' style="display: none">{{ script_info.script_parameter }}</span>
+    <textarea id="message" disabled="disabled" style="height: 100%;width: 100%;border-style: solid;border-color: white;resize: none">
     </textarea>
 {% endblock %}

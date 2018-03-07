@@ -16,7 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from . import views
 
+
 urlpatterns = [
     url(r'^script/$', views.Script, name='script'),
-    url(r'^script/execution/$', views.ScriptExecution),
+    url(r'^script/execution/$', views.script_results),
+    url(r'^scriptexecution/$', views.ScriptExecution),
 ]

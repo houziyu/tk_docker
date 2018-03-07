@@ -1,8 +1,11 @@
 from django.shortcuts import render,HttpResponse
 from . import models
 import paramiko
-from django.utils.safestring import mark_safe
+import multiprocessing
+from dwebsocket.decorators import accept_websocket
 from django.contrib.auth.decorators import login_required
+import time
+import threading
 # Create your views here.
 
 @login_required
@@ -28,45 +31,58 @@ def Script(request):
     return render(request, 'script/script.html',context={'ScriptAllDictionary':ScriptAllDictionary})
 
 @login_required
-def ScriptExecution(request):
-    #脚本数据接收执行
+def script_results(request):
     script_id = request.GET.get('script_id')
     script_parameter = request.GET.get('script_parameter')
     script_status = models.script_data.objects.filter(id=script_id).all()[0].status
-    if script_status == 1 :
-        models.script_data.objects.filter(id=script_id).update(status=2)
-        ssh_type = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ssh_type
-        if script_parameter == 'null':
-            script_parameter = ''
-        host_ip = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ip
-        script_path = models.script_data.objects.filter(id=script_id).all()[0].script_path
-        computer_user = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_user
-        computer_all = {}
-        computer_all['host_ip'] = host_ip
-        computer_all['script_path'] = script_path
-        computer_all['computer_user'] = computer_user
-        computer_all['script_parameter'] = script_parameter
-        computer_all['ssh_type'] = ssh_type
-        if ssh_type == 'password':
-            computer_passw = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_password
-            computer_all['computer_passw'] = computer_passw
-            print(computer_all)
-        elif ssh_type == 'keyfile':
-            computer_keyfile = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ssh_keyfile_path
-            computer_all['computer_keyfile'] = computer_keyfile
-            print(computer_all)
-        else:
-            return HttpResponse('查询不到主机ssh连接认证类型')
-        result = SshConnect(computer_all)
-        result = mark_safe(result)
-        models.script_data.objects.filter(id=script_id).update(status=1)
-        return render(request, 'script/script_results.html', {'result':result})
-    elif script_status == 2 :
+    if script_status == 1:
+        script_info = {}
+        script_info['script_id'] = script_id
+        script_info['script_parameter'] = script_parameter
+        return render(request, 'script/script_results.html',{'script_info':script_info})
+    elif script_status == 2:
         error = '正在编译。请稍后再试。'
-        return render(request, 'script/script_results.html', {'error':error})
+        return render(request, 'script/script_results.html', {'error': error})
+
+@accept_websocket
+def ScriptExecution(request):
+    if request.is_websocket():  # 判断是不是websocket连接
+        for i in request.websocket:
+            script_info = eval(i.decode('utf-8'))
+            print(script_info)
+            script_id  = script_info['script_id']
+            script_parameter = script_info['script_parameter']
+            models.script_data.objects.filter(id=script_id).update(status=2)
+            ssh_type = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ssh_type
+            if script_parameter == 'null':
+                script_parameter = ''
+            host_ip = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ip
+            script_path = models.script_data.objects.filter(id=script_id).all()[0].script_path
+            computer_user = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_user
+            computer_all = {}
+            computer_all['host_ip'] = host_ip
+            computer_all['script_path'] = script_path
+            computer_all['computer_user'] = computer_user
+            computer_all['script_parameter'] = script_parameter
+            computer_all['ssh_type'] = ssh_type
+            if ssh_type == 'password':
+                computer_passw = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_password
+                computer_all['computer_passw'] = computer_passw
+                print(computer_all)
+            elif ssh_type == 'keyfile':
+                computer_keyfile = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ssh_keyfile_path
+                computer_all['computer_keyfile'] = computer_keyfile
+                print(computer_all)
+            SshConnect(computer_all,request.websocket)
+            models.script_data.objects.filter(id=script_id).update(status=1)
+
+def line_buffered(f):
+    while not f.channel.exit_status_ready():
+        line_buf = f.readline()
+        yield line_buf
 
 # def SshConnect(server_name,script_path,script_parameter):
-def SshConnect(computer_all):
+def SshConnect(computer_all,socket):
     command = "bash" + ' ' + computer_all['script_path'] + ' ' + computer_all['script_parameter']
     if computer_all['ssh_type'] == 'keyfile':
         pkey = paramiko.RSAKey.from_private_key_file(computer_all['computer_keyfile'])
@@ -87,10 +103,18 @@ def SshConnect(computer_all):
             username=computer_all['computer_user'],
             password=computer_all['computer_passw'])
     stdin, stdout, stderr = ssh.exec_command(command)
-    out_log_all = stdout.read().decode()
-    err_log_all=stderr.read().decode()
+    thread_1 = threading.Thread(target=aaa,args=(stdout,socket,))  # 实例化一个线程对象，使线程执行这个函数
+    thread_2 = threading.Thread(target=aaa,args=(stderr,socket,))  # 实例化一个线程对象，使线程执行这个函数
+    thread_1.start()
+    thread_2.start()
+    thread_1.join()
+    thread_2.join()
+    script_complete = '脚本执行完成'
+    script_complete = bytes(script_complete, encoding='utf-8')
+    socket.send(script_complete)
     ssh.close()
-    if err_log_all:
-        return err_log_all
-    return   out_log_all
-#/Users/yunque/.ssh/id_rsa
+
+def aaa(log,socket):
+    for i in line_buffered(log):
+        socket.send(i.encode())
+        print(i.encode())
