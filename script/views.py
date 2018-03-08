@@ -1,10 +1,8 @@
 from django.shortcuts import render,HttpResponse
 from . import models
 import paramiko
-import multiprocessing
 from dwebsocket.decorators import accept_websocket
 from django.contrib.auth.decorators import login_required
-import time
 import threading
 # Create your views here.
 
@@ -75,6 +73,7 @@ def ScriptExecution(request):
                 print(computer_all)
             SshConnect(computer_all,request.websocket)
             models.script_data.objects.filter(id=script_id).update(status=1)
+            print('脚本状态更变为1 ')
 
 def line_buffered(f):
     while not f.channel.exit_status_ready():
