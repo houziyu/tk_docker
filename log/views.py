@@ -104,7 +104,6 @@ def DockerUpdateALog(hostname,container_name,log_type):
         if i.name == container_name:
             service_name = i.name.split('-')[0]
             service_name = service_name + '-service'
-            print('service_name')
             if i.status == 'running':
                 log_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
                 print(log_date,service_name,log_type)

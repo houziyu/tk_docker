@@ -1,0 +1,8 @@
+Django==1.11.9
+Pillow==5.1.0
+docker==2.6.1
+docker-py==1.10.6
+django-crontab==0.7.1
+docker-pycreds==0.2.2
+paramiko==2.4.1
+dwebsocket==0.4.2

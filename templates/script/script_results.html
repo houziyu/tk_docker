@@ -3,7 +3,7 @@
     {% if error %}
         <span style="color: red;font-size: 30px">{{ error }}</span>
     {% else %}
-        <script type="text/javascript">//<![CDATA[
+        <script type="text/javascript">
             $(function () {
                 var socket = new WebSocket("ws://" + window.location.host + "/scriptexecution/");
                 socket.onopen = function () {
@@ -18,7 +18,7 @@
                     var ele = document.getElementById("message");
                     ele.value = ele.value + e.data;
                     var ta = document.getElementById('message');
-ta.                 scrollTop = ta.scrollHeight
+                    scrollTop = ta.scrollHeight
                 };
             });
         </script>
