@@ -17,5 +17,6 @@ class script_data(models.Model):
     server_name = models.ForeignKey(host_information,on_delete=models.CASCADE,)
     script_parameter = models.ManyToManyField(all_parameter,blank=True)
     status = models.IntegerField(choices=[(1, '空闲中'),(2, '进行中'),],default=1)
+    last_execution = models.CharField(max_length=50,blank=True)
     def __str__(self):
         return self.script_name

@@ -3,7 +3,7 @@ from . import models
 import paramiko
 from dwebsocket.decorators import accept_websocket
 from django.contrib.auth.decorators import login_required
-import threading
+import threading,datetime
 # Create your views here.
 
 @login_required
@@ -17,9 +17,9 @@ def Script(request):
         parameter=[]
         single['id'] = i.id
         single['script_name']=i.script_name
-        single['script_path'] = i.script_path
         single['service_name'] = i.service_name
         single['server_name'] = i.server_name.host_name
+        single['last_execution'] = i.last_execution
         for y in i.script_parameter.values_list():
             parameter.append(y[1])
         parameter = list(reversed(parameter))
@@ -37,6 +37,8 @@ def script_results(request):
         script_info = {}
         script_info['script_id'] = script_id
         script_info['script_parameter'] = script_parameter
+        now_time = datetime.datetime.now()
+        models.script_data.objects.filter(id=script_id).update(last_execution=now_time)
         return render(request, 'script/script_results.html',{'script_info':script_info})
     elif script_status == 2:
         error = '正在编译。请稍后再试。'
@@ -73,7 +75,8 @@ def ScriptExecution(request):
                 print(computer_all)
             SshConnect(computer_all,request.websocket)
             models.script_data.objects.filter(id=script_id).update(status=1)
-            print('脚本状态更变为1 ')
+            print('脚本状态更变为1')
+            break
 
 def line_buffered(f):
     while not f.channel.exit_status_ready():
@@ -83,6 +86,7 @@ def line_buffered(f):
 # def SshConnect(server_name,script_path,script_parameter):
 def SshConnect(computer_all,socket):
     command = "bash" + ' ' + computer_all['script_path'] + ' ' + computer_all['script_parameter']
+    print('command:',command)
     if computer_all['ssh_type'] == 'keyfile':
         pkey = paramiko.RSAKey.from_private_key_file(computer_all['computer_keyfile'])
         ssh = paramiko.SSHClient()

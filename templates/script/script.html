@@ -16,10 +16,10 @@ $(function(){
         <tr>
             <th>Ordinal Number</th>
             <th>Script Name</th>
-            <th>Script Path</th>
             <th>Service Name</th>
             <th>Server Name</th>
             <th>Script Parameter</th>
+            <th>Last Execution</th>
             <th>Script Slot</th>
         </tr>
     </thead>
@@ -28,7 +28,6 @@ $(function(){
             <tr style="font-size: 15px ">
                 <td class="script_id">{{ script.id }}</td>
                 <td>{{ script.script_name }}</td>
-                <td class="script_path">{{ script.script_path }}</td>
                 <td>{{ script.service_name }}</td>
                 <td class="server_name">{{ script.server_name }}</td>
                 <td class="script_parameter">
@@ -38,6 +37,7 @@ $(function(){
                         {% endfor %}
                     </select>
                 </td>
+                <td class="last_execution">{{ script.last_execution }}</td>
                 <td><a  class="btn btn-primary btn-xs build"  role="button" >执行</a></td>
 {#                <td><input type="button"   class="btn btn-success btn-xs" onclick="test()"  value="提交数据" id="updata"></td>#}
             </tr>
