@@ -17,11 +17,7 @@
                     console.log('message: ' + e.data);//打印服务端返回的数据
                     var ele = document.getElementById("message");
                     ele.value = ele.value + e.data;
-                    var ta = document.getElementById('message');
-                    scrollTop = ta.scrollHeight;
-{#                    if(e.data='脚本状态更变为1'){#}
-{#                        socket.close()#}
-{#                    }#}
+                    ele.scrollTop = ele.scrollHeight;
                 };
             });
         </script>

@@ -48,6 +48,8 @@ def script_results(request):
 def ScriptExecution(request):
     if request.is_websocket():  # 判断是不是websocket连接
         for i in request.websocket:
+            if i is None:
+                break
             script_info = eval(i.decode('utf-8'))
             print(script_info)
             script_id  = script_info['script_id']
@@ -76,7 +78,6 @@ def ScriptExecution(request):
             SshConnect(computer_all,request.websocket)
             models.script_data.objects.filter(id=script_id).update(status=1)
             print('脚本状态更变为1')
-            break
 
 def line_buffered(f):
     while not f.channel.exit_status_ready():
