@@ -17,10 +17,14 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.UserLogin, name='login'),
+    url(r'^$', views.jump,),
+    url(r'^index/$', views.index,name='index'),
+    url(r'^login/$', views.UserLogin, name='login'),
     url(r'^dashboard/$', views.Dashboard, name='dashboard'),
-    url(r'^logout/$', views.UserLogout, name='logout'),
+    url(r'^get_valid_img/$', views.get_valid_img, name='get_valid_img'),
+    url(r'^log_out/$', views.UserLogout, name='logout'),
     url(r'^computer/$', views.Computer, name='computer'),
+    url(r'^connection_test/$', views.connection_test, name='connection_test'),
     url(r'^service_status/$', views.service_status, name='service_status'),
     url(r'^service_status_detection/$', views.service_status_detection, name='service_status_detection'),
 ]

@@ -28,7 +28,15 @@ class DockerInitial(object):
             for y in DockerContainerObject[i]:
                 data = {}
                 data['hostname'] = hostname
-                data['name'] = y.name
+                #集群模式:
+                #config-service.1.38p3n31ag3dg5pfo5la0a9gvc
+                #单机模式:
+                #config-server
+                name_split = y.name.split('.', 2)
+                if len(name_split) > 1:
+                    data['name'] = name_split[0] + '.' + name_split[1]
+                else:
+                    data['name'] = y.name
                 data['image'] = y.image.tags[0]
                 data['short_id'] = y.short_id
                 data['status'] = y.status

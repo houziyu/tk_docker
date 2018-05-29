@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
+    <script type="text/javascript" src="/static/plugins/datepicker/moment.min.js"></script>
+{#    <script type="text/javascript" src="/static/plugins/datepicker/daterangepicker.js"></script>#}
+    <link rel="stylesheet" href="/static/plugins/datepicker/daterangepicker.css"/>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/date_range.js"></script>
+    <section class="content-header">
+        <h1>控制台首页
+            <small>控制面板</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">控制台</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>{{ host_num }}</h3>
+                        <p>主机管理</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-android-desktop"></i>
+                    </div>
+                    <a href="{% url 'computer' %}" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <h3>{{ DockerContainerNub }}</h3>
+                        <p>docker仪表盘</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{% url 'dashboard' %}" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                    <div class="inner">
+                        <h3>{{ ScriptNum }}</h3>
+                        <p>脚本</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-ios-barcode"></i>
+                    </div>
+                    <a href="{% url 'script' %}" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <h3>0</h3>
+                        <p>错误率</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-flash"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+    </section>
+
+{% endblock %}

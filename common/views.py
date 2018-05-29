@@ -1,81 +1,149 @@
 from django.shortcuts import render,redirect,HttpResponseRedirect,HttpResponse
-from django.contrib.auth import authenticate,logout,login
+from django.http.request import QueryDict
+from django.contrib import auth
+from django.contrib.auth import logout
 from lib import docker_main
 from django.contrib.auth.decorators import login_required
 from lib import config
 from common import models
+from script import models as scriptmodels
+from django.views.decorators.csrf import csrf_exempt
 import requests,socket
-
-from django.core.cache import cache
-import datetime,os,random,string
+import paramiko
+import json
 from tk_docker import settings
 from common import verify
+from django.conf import settings  #调用settings
+# Create your views here.
+
+def global_setting(request):   #把setting方法读取出来
+    return {'SITE_NAME': settings.SITE_NAME,}
+
+def jump(request):
+    return HttpResponseRedirect("/login/")
+
+@login_required()
+def index(request):
+    host_num = models.host_information.objects.all().count()
+    DockerContainerNub = len(docker_main.DockerInitial().DockerContainerNow())
+    ScriptNum  = scriptmodels.script_data.objects.all().count()
+    return render(request, 'index.html',{'host_num':host_num,'DockerContainerNub':DockerContainerNub,'ScriptNum':ScriptNum,})
+    # return render(request, 'index.html',locals())
+
 def UserLogin(request):
     #用户登录验证
-    errors = {}
-    ins_env=config.ins_env
-    today_str = datetime.date.today().strftime("%Y%m%d")
-    verify_code_img_path = "%s/%s" % (settings.STATICFILES_DIRS[0]+'/verify',today_str)
-    if not os.path.isdir(verify_code_img_path):
-        os.makedirs(verify_code_img_path, exist_ok=True)
-    print("session:", request.session.session_key)
-    # print("session:",request.META.items())
-    random_filename = "".join(random.sample(string.ascii_lowercase, 4))
-    random_code = verify.gene_code(verify_code_img_path, random_filename)
-    cache.set(random_filename, random_code, 30)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        _verify_code = request.POST.get('verify_code')
-        _verify_code_key = request.POST.get('verify_code_key')
-        print("verify_code_key:", _verify_code_key)
-        print("verify_code:", _verify_code)
-        if cache.get(_verify_code_key) == _verify_code:
+        valid_code = request.POST.get('valid_code')
+        login_response = {"user": None, "error_msg": ""}
+        if request.session.get("verify_code_key") == valid_code:
             print("code verification pass!")
-            user = authenticate(username=username, password=password)
+            user = auth.authenticate(username=username, password=password)
             if user:
-                print('登录完成')
-                login(request, user)
-                next_url = request.GET.get('next')
-                print(next_url)
-                if next_url:
-                    return redirect(next_url)
-                return redirect('/dashboard')
+                auth.login(request, user)
+                login_response["user"] = user.username
             else:
-                errors["error"] = '用户名或者密码错误，请重新输入'
+                login_response["error_msg"] = '用户名或者密码错误，请重新输入！！'
         else:
-            errors['error'] = "验证码错误!"
-    return render(request, 'login.html', {'ins_env': ins_env, "filename": random_filename, "today_str": today_str,"errors":errors})
+            login_response["error_msg"] = '验证码错误！！请重新输入！！'
+        return HttpResponse(json.dumps(login_response))
+    else:
+        ins_env = config.ins_env
+        return render(request, 'login.html', {'ins_env': ins_env, })
 
+def get_valid_img(request):
+    data = verify.gene_code(request)
+    return HttpResponse(data)
 
-@login_required
+@login_required()
 def Dashboard(request):
     #仪表盘
-    host_all = models.host_information.objects.filter(docker_status=1).all()
-    if host_all:
-        type = request.GET.get('type')
-        DockerContainerAll = docker_main.DockerInitial().DockerContainerNow()
-        if type:
-            DockerContainerAll = sorted(DockerContainerAll, key=lambda k: k[type])
-        return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll})
-    else:
-        return HttpResponse('请登录admin添加docker主机信息')
+    DockerContainerAll = docker_main.DockerInitial().DockerContainerNow()
+    return render(request, 'common/dashboard.html', {'DockerContainerAll': DockerContainerAll})
 
-@login_required
+@login_required()
+@csrf_exempt
 def Computer(request):
-    computer_all = models.host_information.objects.all()
-    all_computer = []
-    for i in computer_all:
-        a_computer = {}
-        a_computer['host_name'] = i.host_name
-        a_computer['host_ip'] = i.host_ip
-        a_computer['host_ssh_type'] = i.host_ssh_type
-        a_computer['docker_status'] = i.docker_status
-        all_computer.append(a_computer)
-    print(all_computer)
-    return render(request, 'common/computer.html', {'all_computer': all_computer})
+    if request.method == 'GET':
+        computer_all = models.host_information.objects.all()
+        all_computer = []
+        for i in computer_all:
+            a_computer = {}
+            a_computer['id'] = i.id
+            a_computer['host_name'] = i.host_name
+            a_computer['host_ip'] = i.host_ip
+            a_computer['host_ssh_type'] = i.host_ssh_type
+            a_computer['docker_status'] = i.docker_status
+            all_computer.append(a_computer)
+        print(all_computer)
+        return render(request, 'common/computer.html', {'all_computer': all_computer})
+    elif request.method == 'POST':
+        host_name = request.POST.get('host_name')
+        host_ip = request.POST.get('host_ip')
+        host_user = request.POST.get('host_user')
+        host_ssh_type = request.POST.get('host_ssh_type')
+        login_pass = request.POST.get('login_pass')
+        login_keyfile = request.POST.get('login_keyfile')
+        docker_status = request.POST.get('docker_status')
+        print(host_name,host_ip,host_user,host_ssh_type,login_pass,login_keyfile,docker_status)
+        try:
+            if host_ssh_type == 'password':
+                models.host_information.objects.create(host_name=host_name, host_ip=host_ip, host_user=host_user, host_ssh_type=host_ssh_type,
+                                               host_password=login_pass,docker_status=docker_status)
+            else:
+                models.host_information.objects.create(host_name=host_name, host_ip=host_ip, host_user=host_user,host_ssh_type=host_ssh_type,
+                                         host_ssh_keyfile_path=login_keyfile, docker_status=docker_status)
+        except Exception:
+            return HttpResponse("添加失败")
+        return HttpResponse("添加成功")
+    elif request.method == 'DELETE':
+        delete_dict = QueryDict(request.body, encoding='utf-8')
+        host_name = delete_dict.get('computer_id')
+        print('computer_id:',host_name)
+        try:
+            models.host_information.objects.filter(id=host_name).delete()
+        except Exception:
+            return HttpResponse("删除失败")
+        return HttpResponse("删除成功")
+    # return render(request, 'common/computer.html', locals())
 
-@login_required
+@login_required()
+def connection_test(request):
+    if request.method == 'POST':
+        host_ip = request.POST.get('host_ip')
+        host_user = request.POST.get('host_user')
+        host_ssh_type = request.POST.get('host_ssh_type')
+        login_pass = request.POST.get('login_pass')
+        login_keyfile = request.POST.get('login_keyfile')
+        print(host_ip,host_user,host_ssh_type,login_pass,login_keyfile)
+        try:
+            if host_ssh_type== 'keyfile':
+                pkey = paramiko.RSAKey.from_private_key_file(login_keyfile)
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(
+                    hostname=host_ip,
+                    port=22,
+                    username=host_user,
+                    pkey=pkey,
+                    timeout=5,)
+            elif host_ssh_type == 'password':
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(
+                    hostname=host_ip,
+                    port=22,
+                    username=host_user,
+                    password=login_pass,
+                    timeout=5,)
+        except Exception:
+            print('主机添加失败！')
+            return HttpResponse("连接失败，请检查相关信息")
+        return HttpResponse("连接测试通过")
+
+
+@login_required()
 def service_status(request):
     service_status_all = models.service_status_detection.objects.all()
     service_status_list = []

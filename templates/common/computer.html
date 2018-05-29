@@ -1,27 +1,291 @@
-{% extends 'base.html' %}
-{% block body %}
-<table class="table table-bordered;table table-hover" style="margin-top: 10px">
-    <thead>
-        <tr>
-            <th>Host Name</th>
-            <th>Host Ip</th>
-            <th>Ssh Type</th>
-            <th>Docker Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in all_computer %}
-            <tr>
-                <td>{{ i.host_name }}</td>
-                <td >{{ i.host_ip }}</td>
-                <td>{{ i.host_ssh_type }}</td>
-                {% if i.docker_status == '1' %}
-                     <td>使用</td>
-                {% else %}
-                    <td>不使用</td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>主机管理
+        <small><button type="button" class="btn btn-block btn-primary btn-xs" data-toggle="modal" data-target="#myModal" >添加</button></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">主机管理</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Host Id</th>
+                                    <th>Host Name</th>
+                                    <th>Host Ip</th>
+                                    <th>Ssh Type</th>
+                                    <th>Docker Status</th>
+                                    <th>Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for i in all_computer %}
+                                    <tr>
+                                        <td>{{ i.id }}</td>
+                                        <td>{{ i.host_name }}</td>
+                                        <td >{{ i.host_ip }}</td>
+                                        <td>{{ i.host_ssh_type }}</td>
+                                        {% if i.docker_status == '1' %}
+                                             <td>使用</td>
+                                        {% else %}
+                                            <td>不使用</td>
+                                        {% endif %}
+                                        <td>
+{#                                            <button class="btn btn-facebook btn-sm" onclick='editor_host({{ i.id }},{{ i.host_name  }},{{ i.host_ip }},{{ i.docker_status }})'>编辑</button>#}
+                                            <button type="button" class="btn btn-danger btn-xs" onclick='cache({{ i.id }})' data-toggle="modal" data-target="#modal-warning">删除</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                    <h4 class="modal-title">添加主机</h4>
+                </div>
+                <div class="box">
+                    <div class="box-body">
+                        <form class="form-horizontal" method="post" id="form_id">{% csrf_token %}
+                            <div class="form-group">
+                                <label for="t1" class="col-sm-2 control-label">主机名</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="host_name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="t2" class="col-sm-2 control-label">主机IP</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="host_ip" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="t3" class="col-sm-2 control-label">用户名</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="host_user" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="t4" class="col-sm-2 control-label">认证方式</label>
+                               <div class="col-sm-6">
+                                   <select class="form-control" name="host_ssh_type" onchange='authChange(this[selectedIndex].value);'>
+                                       <option value="password">密码认证</option>
+                                       <option value="keyfile">密钥认证</option>
+                                   </select>
+                               </div>
+                            </div>
+                            <div class="form-group" id='auth_password' style="">
+                                <label for="t5" class="col-sm-2 control-label">密码</label>
+                                <div class="col-sm-6">
+                                    <input type="password" name="login_pass" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group" id='auth_keyfile' style="display: none">
+                                <label for="t6" class="col-sm-2 control-label">密钥路径</label>
+                                <div class="col-sm-6" >
+                                    <input type="text" name="login_keyfile" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="t7" class="col-sm-2 control-label">docker</label>
+                                <div class="col-sm-6">
+                                    <select  name='docker_status' class="form-control">
+                                        <option value="2">不使用</option>
+                                        <option value="1">使用</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-6">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" id="connection_test">连接测试</button>
+                                <button type="button" class="btn btn-success disabled" id="fake_button">添加主机</button>
+                                <button type="button" class="btn btn-success" style="display: none" data-dismiss="modal" id="submitBtn">添加主机</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="overlay" id="loading" style="display: none">
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </div>
+                    <!-- end loading -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-danger fade" id="modal-warning">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <p >是否确定删除？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-outline" onclick="del_id()">确定</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+{% block js %}
+    <!-- example表格初始化 -->
+    <script>
+      $(function () {
+        $('#example').DataTable({
+          'paging'      : false,
+          'lengthChange': false,
+          'searching'   : false,
+          'ordering'    : true,
+          'info'        : false,
+          'autoWidth'   : true
+        })
+      })
+    </script>
+    <!-- from 认证动态表单 -->
+    <script>
+    function authChange(values) {
+        if (values == "password") {
+            document.getElementById('auth_password').style.display = '';
+            document.getElementById('auth_keyfile').style.display = 'none';
+        }
+        else if (values == "keyfile"){
+            document.getElementById('auth_keyfile').style.display = '';
+            document.getElementById('auth_password').style.display = 'none';
+        }
+    }
+    </script>
+     <!-- from 添加主机 -->
+    <script>
+        $(document).ready(function () {
+            $("#submitBtn").click(function () {
+                var form = $('#form_id').serialize();
+                $.ajax({
+                    url: '/computer/',
+                    async: false,//同步，会阻塞操作
+                    type: 'POST',//PUT DELETE POST
+                    data: form,
+                    success: function (result) {
+                        if (result == "添加成功") {
+                            alert(result);
+                            window.location.reload()
+                        }
+                        else  {
+                                alert(result);
+                                console.log(result)
+                            }
+                    }, error: function () {
+                        alert("请求出现错误")
+                    }
+                })
+            });
+        });
+    </script>
+    <!-- from 编辑主机 -->
+{#    <script>#}
+{#    function editor_host(id,host_name,host_ip,docker_status) {#}
+{#        console.log(id,host_name,host_ip,docker_status);#}
+{#        $.ajax({#}
+{#            url:/computer/,#}
+{#            type:'DELETE',#}
+{#            data:{computer_id:computer_id},#}
+{#            success:function (result) {#}
+{#                if (result == "删除成功") {#}
+{#                    alert(result);#}
+{#                    window.location.reload()#}
+{#                }#}
+{#                else  {#}
+{#                    alert(result);#}
+{#                    console.log(result)#}
+{#                }#}
+{#            }#}
+{#        })#}
+{#    }#}
+{#    </script>#}
+    <!-- from 删除主机 -->
+    <script>
+    var computerId;
+    function cache(id){
+        computerId = id;
+    }
+    function del_id() {
+        var computer_id = computerId;//$(val).attr('data');
+        console.log(computerId);
+        $.ajax({
+            url:/computer/,
+            type:'DELETE',
+            data:{computer_id:computer_id},
+            success:function (result) {
+                if (result == "删除成功") {
+                    alert(result);
+                    window.location.reload()
+                }
+                else  {
+                    alert(result);
+                    console.log(result)
+                }
+            }
+        })
+    }
+    </script>
+    <!-- from 连接测试 -->
+    <script>
+     $(document).ready(function () {
+            $("#connection_test").click(function () {
+                document.getElementById('loading').style.display = '';
+                var form = $('#form_id').serialize();
+                $.ajax({
+                    url: '/connection_test/',
+                    async: true,//同步，会阻塞操作
+                    type: 'POST',//PUT DELETE POST
+                    data: form,
+                    success: function (result) {
+                        if (result == "连接测试通过") {
+                            document.getElementById('fake_button').style.display = 'none';
+                            document.getElementById('submitBtn').style.display = '';
+                            document.getElementById('loading').style.display = 'none';
+                            console.log(result);
+                            alert("连接测试通过")
+                        }
+                        else  {
+                                alert(result);
+                                document.getElementById('loading').style.display = 'none';
+                                console.log(result)
+                            }
+                    }, error: function () {
+                        document.getElementById('loading').style.display = 'none';
+                        alert("请求出现错误")
+
+                    }
+                })
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,10 +1,43 @@
-{% extends 'base.html' %}
-{% block body %}
-    {% if return_results == None %}
-        <a href="{% url 'dashboard' %} ">{{ log_name }}</a>
-    {% elif log_name == None %}
-        <a href="{% url 'dashboard' %} ">{{ return_results }}</a>
-    {% else  %}
-        <a href="/log/download/?log_path={{ return_results }}&log_name={{ log_name }}">{{ log_name }}</a>
-    {% endif %}
+{#{% extends 'base.html' %}#}
+{#{% block body %}#}
+{#    {% if return_results == None %}#}
+{#        <a href="{% url 'dashboard' %} ">{{ log_name }}</a>#}
+{#    {% elif log_name == None %}#}
+{#        <a href="{% url 'dashboard' %} ">{{ return_results }}</a>#}
+{#    {% else  %}#}
+{#        <a href="/log/download/?log_path={{ return_results }}&log_name={{ log_name }}">{{ log_name }}</a>#}
+{#    {% endif %}#}
+{#{% endblock %}#}
+
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>日志下载</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">日志下载</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        {% if return_results == None %}
+                            <a href="{% url 'dashboard' %} ">{{ log_name }}</a>
+                        {% elif log_name == None %}
+                            <a href="{% url 'dashboard' %} ">{{ return_results }}</a>
+                        {% else  %}
+                            <a href="/log/download/?log_path={{ return_results }}&log_name={{ log_name }}">{{ log_name }}</a>
+                        {% endif %}
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
 {% endblock %}

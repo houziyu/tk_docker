@@ -1,53 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>clx运维后台管理</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-    <style>
-        body{height:100%;background:#16a085;overflow:hidden;}
-        canvas{z-index:-1;position:absolute;}
-    </style>
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/verificationNumbers.js"></script>
-    <script src="/static/js/Particleground.js"></script>
-    <script>
-    $(document).ready(function() {
-    //粒子背景特效
-        $('body').particleground({
-            dotColor: '#5cbdaa',
-            lineColor: '#5cbdaa'
-        });
-    });
-    </script>
+    <title>欢迎登录-{{ SITE_NAME }}运维平台</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="http://staticwos.mayi.com/pub/css/login.css"/>
+    <script type="text/javascript" src="http://staticwos.mayi.com/pub/js/jquery-3.2.1.min.js"></script>
 </head>
 <body>
-    <canvas class="pg-canvas" width="1366" height="559"></canvas>
-    <form class="form-horizontal" method="post" style="padding-bottom: 30px"> {% csrf_token %}
-        <dl class="admin_login">
-            <dt>
-                <strong>clx后台管理系统</strong>
-                {% if errors %}
-                    <span style="font-size: 15px;color: #00CCFF">{{ errors.error }}</span>
-                {% else %}
-                    <span style="font-size: 15px;color: #00CCFF">{{ ins_env }}</span>
-                {% endif %}
-            </dt>
-            <dd class="user_icon">
-                <input name="username" type="text" placeholder="用户名" class="login_txtbx">
-            </dd>
-            <dd class="pwd_icon">
-                <input name="password" type="password" placeholder="密码" class="login_txtbx">
-            </dd>
-            <dd class="val_icon">
-                <input style="width: 40%" name="verify_code" maxlength='4' type="text" placeholder="验证码" class="login_txtbx">
-                <input  type="hidden" name="verify_code_key" value="{{ filename }}" >
-                <a href="/"><img style="margin-left: 20px" height="40px" src="/static/verify/{{ today_str }}/{{ filename }}.png"></a>
-            </dd>
-            <dd>
-                <button type="submit"  class="submit_btn">登陆</button>
-            </dd>
-        </dl>
-    </form>
+<div class="login">
+    <div class="message">{{ SITE_NAME }}运维平台-登录({{ ins_env }})</div>
+    {% csrf_token %}
+    <div id="darkbannerwrap"></div>
+    <input name="action" value="login" type="hidden">
+    <input placeholder="用户名" required="" type="text" id="user">
+    <hr class="hr15">
+    <input placeholder="密码" required="" type="password" id="pwd">
+    <hr class="hr15">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-4" >
+                <input type="text" class="form-control" id="valid" placeholder="验证码" style="width: 100px;height:40px;margin-right: 30px" >
+            </div>
+            <div class="col-md-8">
+                <img id="valid_img" src="{% url 'get_valid_img' %}" alt="" style="width: 200px;height: 40px">
+            </div>
+        </div>
+    </div>
+    <input type="button" class="btn btn-primary" value="登录" id="login_btn"><span class="error"></span>
+    <hr class="hr20">
+
+</div>
+
 </body>
+
+
+<script>
+    // 验证码刷新
+    $("#valid_img").click(function () {
+        $(this)[0].src +='?'
+    });
+
+    // ajax请求验证
+
+    $("#login_btn").click(function () {
+
+        $.ajax({
+            url: "/login/",
+            type: "post",
+            data: {
+                "username": $("#user").val(),
+                "password": $("#pwd").val(),
+                "valid_code": $("#valid").val(),
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val()
+            },
+            success: function (data) {   // {"user":"","error_meg":""}
+                console.log(data);
+                var data = JSON.parse(data);
+                if (data.user) {
+                    // 登录成功
+                    location.href = "/index/"
+                }
+                else {
+                    $(".error").html(data.error_msg).css('color', "red");
+                    setTimeout(function () {
+                        $(".error").html("")
+                    }, 1000)
+                }
+            }
+        })
+    })
+</script>
+
+
 </html>

@@ -4,8 +4,8 @@ from django.db import models
 
 class host_information(models.Model):
     #脚本的具体参数信息
-    host_name = models.CharField(max_length=40)
-    host_ip = models.GenericIPAddressField(max_length=40)
+    host_name = models.CharField(max_length=40,unique=True)
+    host_ip = models.GenericIPAddressField(max_length=40,unique=True)
     host_ssh_type = models.CharField(max_length=40,choices=[('password', '密码登录'),('keyfile', '密钥登录'),],default=1)
     host_ssh_keyfile_path = models.CharField(blank=True,max_length=100)
     host_user = models.CharField(max_length=40)

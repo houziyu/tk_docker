@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'wa)b=efp4+6n4u#_+vezmi3&k%-6vqnlt(#wz_fs7%hk!0^reb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'common.views.global_setting'
             ],
         },
     },
@@ -139,3 +140,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'statics'),
 )
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+SITE_NAME = '诚联信'

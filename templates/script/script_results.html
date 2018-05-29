@@ -1,29 +1,61 @@
-{% extends 'base.html' %}
-{% block body %}
-    {% if error %}
-        <span style="color: red;font-size: 30px">{{ error }}</span>
-    {% else %}
-        <script type="text/javascript">
-            $(function () {
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>{{ script_info.script_name }}
+            <small id="info">
+                脚本id:<span id='script_id' style="color: red;font-weight: bold">{{ script_info.script_id }}</span>,
+                脚本参数:<span id='script_parameter' style="color: red;font-weight: bold">{{ script_info.script_parameter }}</span>
+            </small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">docker仪表盘</li>
+            <li class="active">{{ script_info.script_name }}</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <span id='logerror' style="color: red;font-size: 30px">{{ error }}</span>
+{#                        <span id='script_id'  style="display: none">{{ script_info.script_id }}</span>#}
+{#                        <span id='script_parameter' style="display: none">{{ script_info.script_parameter }}</span>#}
+                        <textarea id='message' disabled="disabled" style="height: 600px;width: 100%;border-style: solid;border-color: white;resize: none"></textarea>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{%  block js  %}
+    <script type="text/javascript">
+        $(function () {
+            var logerror = document.getElementById('logerror').innerHTML;
+            if (logerror.length == 0){
                 var socket = new WebSocket("ws://" + window.location.host + "/scriptexecution/");
+                var script_id = document.getElementById('script_id').innerHTML;
+                var script_parameter = document.getElementById('script_parameter').innerHTML;
+                var script_info = '{\'script_id\':'+script_id+','+'\'script_parameter\':'+'\''+script_parameter+'\''+'}';
+                var ele = document.getElementById("message");
                 socket.onopen = function () {
-                    var script_id = document.getElementById('script_id').innerHTML;
-                    var script_parameter = document.getElementById('script_parameter').innerHTML;
-                    var script_info = '{\'script_id\':'+script_id+','+'\'script_parameter\':'+'\''+script_parameter+'\''+'}';
                     console.log('WebSocket open');//成功连接上Websocket
                     socket.send(script_info);//发送数据到服务端
                 };
                 socket.onmessage = function (e) {
                     console.log('message: ' + e.data);//打印服务端返回的数据
-                    var ele = document.getElementById("message");
                     ele.value = ele.value + e.data;
                     ele.scrollTop = ele.scrollHeight;
                 };
-            });
-        </script>
-    {% endif %}
-    <span id='script_id'  style="display: none">{{ script_info.script_id }}</span>
-    <span id='script_parameter' style="display: none">{{ script_info.script_parameter }}</span>
-    <textarea id="message" disabled="disabled" style="height: 100%;width: 100%;border-style: solid;border-color: white;resize: none">
-    </textarea>
+            }else {
+                document.getElementById('info').style.display = 'none';
+            }
+        });
+    </script>
 {% endblock %}

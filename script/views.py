@@ -26,7 +26,7 @@ def Script(request):
         single['parameter'] = parameter
         ScriptAllDictionary.append(single)
     print(ScriptAllDictionary)
-    return render(request, 'script/script.html',context={'ScriptAllDictionary':ScriptAllDictionary})
+    return render(request, 'script/script.html',{'ScriptAllDictionary':ScriptAllDictionary})
 
 @login_required
 def script_results(request):
@@ -35,6 +35,7 @@ def script_results(request):
     script_status = models.script_data.objects.filter(id=script_id).all()[0].status
     if script_status == 1:
         script_info = {}
+        script_info['script_name'] = models.script_data.objects.filter(id=script_id).all()[0].script_name
         script_info['script_id'] = script_id
         script_info['script_parameter'] = script_parameter
         now_time = datetime.datetime.now()
@@ -92,7 +93,6 @@ def SshConnect(computer_all,socket):
         pkey = paramiko.RSAKey.from_private_key_file(computer_all['computer_keyfile'])
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        print(command)
         ssh.connect(
             hostname=computer_all['host_ip'],
             port=22,
@@ -121,4 +121,3 @@ def SshConnect(computer_all,socket):
 def aaa(log,socket):
     for i in line_buffered(log):
         socket.send(i.encode())
-        print(i.encode())

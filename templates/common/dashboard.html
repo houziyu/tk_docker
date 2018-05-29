@@ -1,38 +1,73 @@
-{% extends 'base.html' %}
-{% block body %}
-<table class="table table-bordered;table table-hover" style="margin-top: 10px">
-    <thead>
-        <tr>
-            <th>Host Name<a href="/dashboard/?type=hostname"><img src="/static/image/sort.png" height="20" width="20"></a></th>
-            <th>Container Name<a href="/dashboard/?type=name"><img src="/static/image/sort.png" height="20" width="20"></a></th>
-            <th>Image Name<a href="/dashboard/?type=image"><img src="/static/image/sort.png" height="20" width="20"></a></th>
-            <th>Short Id</th>
-            <th>Status</th>
-            <th>Log</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in DockerContainerAll %}
-            <tr>
-                <td>{{ i.hostname }}</td>
-{#                <td style="word-break:break-all; width:200px; overflow:auto;">dnfjhkdhuisfduifkjsdfkjhsdfkjhkjsdhfhkjsdfkjhsdfkjhsdfkjhsdkfjhsdkfjhskdfhjksdjhfkshjksfj</td>#}
-                <td >{{ i.name }}</td>
-{#                    <td><a href="/log/now/?hostname={{ hostname }}&container_name={{ i.name }}">{{ i.name }}</a></td>#}
-                <td>{{ i.image }}</td>
-                <td>{{ i.short_id}}</td>
-                {% if i.status == 'running' %}
-                    <td><img height="20" width="20" src="/static/image/running.png"></td>
-{#                    <td style="padding: 1px"><span class="btn btn-success" style="cursor:default;border-radius:50px;width: 75px">{{ i.status }}</span></td>#}
-                {% elif i.status == 'exited'%}
-                    <td><img height="20" width="20" src="/static/image/exit.png"></td>
-{#                    <td style="padding: 1px"><span class="btn btn-warning" style="cursor:default;border-radius:50px;width: 75px">{{ i.status }}</span></td>#}
-                {% else %}
-                    <td>{{ i.status }}</td>
-                {% endif %}
-                <td><a href="/log/now/?hostname={{ i.hostname }}&container_name={{ i.name }}&log_type=log_info" class="btn btn-primary btn-xs build" >info</a>
-                    <a href="/log/now/?hostname={{ i.hostname }}&container_name={{ i.name }}&log_type=log_error" class="btn btn-danger btn-xs build">error</a></td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>docker仪表盘
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">docker仪表盘</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Host Name</th>
+                                    <th>Container Name</th>
+                                    <th>Image Name</th>
+                                    <th>Short Id</th>
+                                    <th>Status</th>
+                                    <th>Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in DockerContainerAll %}
+                                    <tr role="row" class="even">
+                                        <td>{{ i.hostname }}</td>
+                                        <td>{{ i.name }}</td>
+                                        <td>{{ i.image }}</td>
+                                        <td>{{ i.short_id}}</td>
+                                        {% if i.status == 'running' %}
+                                        <td><img height="20" width="20" src="/static/image/running.png"></td>
+                                        {% elif i.status == 'exited'%}
+                                        <td><img height="20" width="20" src="/static/image/exit.png"></td>
+                                        {% else %}
+                                        <td>{{ i.status }}</td>
+                                        {% endif %}
+                                        <td>
+                                            <a href="/log/now/?hostname={{ i.hostname }}&container_name={{ i.name }}&log_type=log_info" class="btn  btn-info btn-xs"  >info</a>
+                                            <a href="/log/now/?hostname={{ i.hostname }}&container_name={{ i.name }}&log_type=log_error" class="btn  btn-danger btn-xs ">error</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block js %}
+    <script>
+      $(function () {
+        $('#example').DataTable({
+          'paging'      : true,
+          'lengthChange': false,
+          'searching'   : false,
+          'ordering'    : true,
+          'info'        : false,
+          'autoWidth'   : true
+        })
+      })
+    </script>
 {% endblock %}

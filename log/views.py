@@ -2,27 +2,23 @@ from django.shortcuts import render,HttpResponse
 from django.http import StreamingHttpResponse
 from lib import docker_main
 from lib import config
-from django.utils.safestring import mark_safe
 import datetime,time
 import os,zipfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from collections import deque
+from dwebsocket.decorators import accept_websocket
 # Create your views here.
 @login_required
 def LogNow(request):
     # 接收前端传递参数进行计算返回渲染后的页面
     if request.method == 'GET':
-        FindTime = ''
         Hostname = request.GET.get('hostname')
         ContainerName = request.GET.get('container_name')
         log_type = request.GET.get('log_type')
         if log_type == 'log_info':
-            if request.GET.get('find_time'):
-                FindTime = request.GET.get('find_time')
-            logs = DockerLog(Hostname, ContainerName, FindTime)
-            logs_str = mark_safe(str(logs, encoding="utf-8"))
-            info = {'logs': logs_str,'log_type':log_type ,'hostname': Hostname, 'container_name': ContainerName}
+            logs = DockerLog(Hostname, ContainerName)
+            info = {'logs':logs,'log_type':log_type ,'hostname': Hostname, 'container_name': ContainerName}
             return render(request, 'log/lognow.html', info)
             # 获取到了容器的name 然后去lib中搜索name的容器然后进行日志打印
         elif log_type == 'log_error':
@@ -37,20 +33,32 @@ def LogNow(request):
             info = {'logs': log_all,'log_type':log_type , 'hostname': Hostname, 'container_name': ContainerName}
             return render(request, 'log/lognow.html', info)
 
-def DockerLog(Hostname, ContainerName, FindTime):
+def DockerLog(Hostname, ContainerName):
     # 调取所有容器判断健康度，然后返回日志.
     DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
     ContainerAll = DockerContainerAll[Hostname]
     for i in ContainerAll:
-        if i.name == ContainerName:
-            if FindTime:
-                FindTime = int(FindTime)
-                DatetimeNow = datetime.datetime.now() + datetime.timedelta(minutes=-FindTime,hours=-8)
-                b_logs = i.logs(since=DatetimeNow)
-                return b_logs
-            else:
-                b_logs = i.logs(tail=config.log_tail_line)
-                return b_logs
+        if i.name in ContainerName:
+            b_logs = i.logs(tail=config.log_tail_line)
+            return b_logs
+
+@accept_websocket
+def log_socket(request):
+    if request.is_websocket():  # 判断是不是websocket连接
+        for i in request.websocket:
+            if i is None:
+                break
+            print(i)
+            log_info =eval(i.decode('utf-8'))
+            print(log_info)
+            hostname = log_info['hostname']
+            container_name = log_info['container_name']
+            DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
+            ContainerAll = DockerContainerAll[hostname]
+            for i in ContainerAll:
+                if i.name in container_name:
+                    for line in i.logs(tail=0,stream=True):
+                        request.websocket.send(line)
 
 @login_required
 def LogDump(request):
@@ -61,17 +69,16 @@ def LogDump(request):
         container_name = request.GET.get('container_name')
         log_type = request.GET.get('log_type')
         if all_log:
-            docker_log_bak = DockerUpdateAllLog()
-            return render(request, 'log/downandback.html', docker_log_bak)
+            try:
+                docker_log_bak = DockerUpdateAllLog()
+                return HttpResponse(docker_log_bak)
+            except Exception:
+                return HttpResponse('备份出错！')
         elif hostname and container_name and log_type:
             print(hostname,container_name)
             docker_download_log_path = DockerUpdateALog(hostname=hostname,container_name=container_name,log_type=log_type)
             print(docker_download_log_path)
             return render(request, 'log/downandback.html', docker_download_log_path)
-        else:
-            errors = {'return_results': '参数传递有错误！请检查!', 'log_name': None}
-            return render(request, 'log/downandback.html', errors)
-    return HttpResponse('出错了~')
 
 #docker log的备份，分两种方式，一种是所有的日志全部备份在升级前，第二种是开发人员查看当天的日志需要进行下拉下载操作临时文件都保存在了tmp目录下
 def DockerUpdateAllLog():
@@ -94,14 +101,14 @@ def DockerUpdateAllLog():
                     log_file.write('执行时间:' + date_now)
                     log_file.write(log_str)
                     log_file.close()
-    return_results = {'return_results': '!备份成功!返回主页!', 'log_name': None}
+    return_results = '备份成功！！'
     return return_results
 
 def DockerUpdateALog(hostname,container_name,log_type):
     # 某个容器的日志下载
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all[hostname]:
-        if i.name == container_name:
+        if i.name in container_name:
             service_name = i.name.split('-')[0]
             service_name = service_name + '-service'
             if i.status == 'running':
@@ -175,9 +182,6 @@ def LogDirPage(request):
     log_type = request.GET.get('log_type')
     sort = request.GET.get('sort')
     print(sort)
-    # if not sort:
-    #     sort = '1'
-
     print(service_name, log_type)
     log_path = config.log_dir_master
     service_name_path = log_path + '/' + service_name + '/' + log_type
@@ -204,27 +208,3 @@ def LogDirPage(request):
     except EmptyPage:
         contacts = paginator.page(paginator.num_pages)
     return render(request, 'log/catdownlog.html', {"contacts": contacts, 'information': information})
-# @login_required
-# def LogDirPage(request):
-#     service_name = request.GET.get('service_name')
-#     log_type = request.GET.get('log_type')
-#     print(service_name,log_type)
-#     log_path = config.log_dir_master
-#     service_name_path = log_path + '/' + service_name + '/' + log_type
-#     all_file = []
-#     for i in os.listdir(service_name_path):
-#         file_path = service_name_path + '/' + i
-#         if os.path.isfile(file_path):
-#             all_file.append([i, file_path])
-#     print(all_file)
-#     all_file = sorted(all_file, key=lambda file_name: file_name[1])
-#     paginator = Paginator(all_file, 13)  # Show 25 contacts per page
-#     page = request.GET.get('page')
-#     information = [{'service_name':service_name,'log_type':log_type}]
-#     try:
-#         contacts = paginator.page(page)
-#     except PageNotAnInteger:
-#         contacts = paginator.page(1)
-#     except EmptyPage:
-#         contacts = paginator.page(paginator.num_pages)
-#     return render(request, 'log/catdownlog.html', {"contacts": contacts, 'information': information})
