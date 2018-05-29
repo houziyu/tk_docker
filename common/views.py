@@ -38,7 +38,6 @@ def UserLogin(request):
         valid_code = request.POST.get('valid_code')
         login_response = {"user": None, "error_msg": ""}
         if request.session.get("verify_code_key") == valid_code:
-            print("code verification pass!")
             user = auth.authenticate(username=username, password=password)
             if user:
                 auth.login(request, user)
