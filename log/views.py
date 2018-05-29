@@ -38,13 +38,9 @@ def DockerLog(Hostname, ContainerName):
     DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
     ContainerAll = DockerContainerAll[Hostname]
     for i in ContainerAll:
-        if i.name in ContainerName:
+        if ContainerName in i.name:
             b_logs = i.logs(tail=config.log_tail_line)
             return b_logs
-        else:
-            test_name = i.name,ContainerName
-            print(test_name)
-            return test_name
 
 @accept_websocket
 def log_socket(request):
