@@ -56,7 +56,7 @@ def log_socket(request):
             DockerContainerAll = docker_main.DockerInitial().DockerContainerCictionary()
             ContainerAll = DockerContainerAll[hostname]
             for i in ContainerAll:
-                if i.name in container_name:
+                if container_name in i.name:
                     for line in i.logs(tail=0,stream=True):
                         request.websocket.send(line)
 
