@@ -41,6 +41,10 @@ def DockerLog(Hostname, ContainerName):
         if i.name in ContainerName:
             b_logs = i.logs(tail=config.log_tail_line)
             return b_logs
+        else:
+            test_name = i.name,ContainerName
+            print(test_name)
+            return test_name
 
 @accept_websocket
 def log_socket(request):
