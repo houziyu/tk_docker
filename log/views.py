@@ -108,7 +108,7 @@ def DockerUpdateALog(hostname,container_name,log_type):
     # 某个容器的日志下载
     docker_container_all = docker_main.DockerInitial().DockerContainerCictionary()
     for i in docker_container_all[hostname]:
-        if i.name in container_name:
+        if container_name in i.name :
             service_name = i.name.split('-')[0]
             service_name = service_name + '-service'
             if i.status == 'running':
