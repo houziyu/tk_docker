@@ -29,7 +29,6 @@ def LogNow(request):
             log_all = ''
             for i in log_format:
                 log_all = log_all + i
-            print(log_all)
             info = {'logs': log_all,'log_type':log_type , 'hostname': Hostname, 'container_name': ContainerName}
             return render(request, 'log/lognow.html', info)
 
@@ -117,14 +116,16 @@ def DockerUpdateALog(hostname,container_name,log_type):
                 service_log_path = '/logs/' + service_name + '/'+log_type+'.log'
                 print('/logs/' + service_name + '/'+log_type+'.log')
                 log_init = i.get_archive(service_log_path)
-                log_str = str(log_init[0].data, encoding="utf-8")
+                log_all= ''
+                for i in log_init[0]:
+                    log_all = log_all +  str(i, encoding="utf-8")
                 log_name = hostname + '-' + service_name + '-' + log_date + '-' +  log_type + '.log'
                 log_dir_master = config.log_dir_master
                 log_path = log_dir_master + '/'+'tmp/' + log_name
                 log_file = open(log_path, 'a+')
                 date_now = str(datetime.datetime.now())
                 log_file.write('执行时间:' + date_now+'\n')
-                log_file.write(log_str)
+                log_file.write(log_all)
                 log_file.close()
                 return_results = {'return_results': log_path, 'log_name': log_name}
                 return return_results
