@@ -59,11 +59,13 @@
                 socket.onclose = function () {
                     $('#linking').text('连接关闭');
                 };
+            }else {
+                document.getElementById('closewebsocket').style.display = 'none';
+                document.getElementById('linking').style.display = 'none';
             }
             $('#closewebsocket').click(function () {
                 socket.onclose();
                 socket.close();
-
             });
         });
     </script>
