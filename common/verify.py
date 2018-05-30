@@ -1,11 +1,10 @@
 from PIL import Image,ImageDraw,ImageFont,ImageFilter
-from tk_docker import settings
 import random
 import string
 from io import BytesIO
 
 #字体的位置，不同版本的系统会有不同
-font_path = settings.STATICFILES_DIRS[0]+'/font/Arial.ttf'
+font_path = 'statics/adminLTE/bower_components/font-awesome/fonts/Arial.ttf'
 # font_path = '/Library/Fonts/Hanzipen.ttc'
 #生成几位数的验证码
 number = 4
