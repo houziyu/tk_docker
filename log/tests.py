@@ -28,3 +28,5 @@ def cron_dump_error_log():
                         num += 1
                 except BaseException:
                     pass
+
+print(111)
