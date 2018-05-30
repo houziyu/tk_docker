@@ -1,28 +1,50 @@
-{% extends 'base.html' %}
-
-{% block extra-head-resources %}
-<script type="text/javascript" src="/static/js/id_numb.js"></script>
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>历史日志</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">历史日志</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ordinal number</th>
+                                    <th>Server Name</th>
+                                    <th>Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for i in service_now %}
+                                    <tr>
+                                        <td>id</td>
+                                        <td>{{ i }}</td>
+                                        <td>
+                                        <a href="/log/dirlist/?service_name={{ i }}&log_type=info" class="btn btn-primary btn-xs build" >info</a>
+                                        <a href="/log/dirlist/?service_name={{ i }}&log_type=error" class="btn btn-danger btn-xs build">error</a>
+                                        <a href="/log/dirlist/?service_name={{ i }}&log_type=update" class="btn btn-info btn-xs build">update</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
 {% endblock %}
-
-{% block body %}
-<table class="table table-bordered;table table-hover" style="margin-top: 10px">
-    <thead>
-        <tr>
-            <th>Ordinal number</th>
-            <th>Server Name</th>
-            <th>Log</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in service_now %}
-                <tr>
-                    <td>id</td>
-                    <td>{{ i }}</td>
-                    <td><a href="/log/dir/page/?service_name={{ i }}&log_type=info" class="btn btn-primary btn-xs build" >info</a>
-                    <a href="/log/dir/page/?service_name={{ i }}&log_type=error" class="btn btn-danger btn-xs build">error</a>
-                    <a href="/log/dir/page/?service_name={{ i }}&log_type=update" class="btn btn-info btn-xs build">update</a></td>
-                </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block js %}
+<script type="text/javascript" src="/static/js/id_numb.js"></script>
 {% endblock %}

@@ -1,13 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
-    <script src="/static/js/echarts.min.js"></script>
-    <script type="text/javascript" src="/static/plugins/datepicker/moment.min.js"></script>
-{#    <script type="text/javascript" src="/static/plugins/datepicker/daterangepicker.js"></script>#}
-    <link rel="stylesheet" href="/static/plugins/datepicker/daterangepicker.css"/>
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/date_range.js"></script>
     <section class="content-header">
         <h1>控制台首页
             <small>控制面板</small>
@@ -66,13 +58,13 @@
                 <!-- small box -->
                 <div class="small-box bg-red">
                     <div class="inner">
-                        <h3>0</h3>
-                        <p>错误率</p>
+                        <h3>{{ ServiceErrorNum }}</h3>
+                        <p>服务错误</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-flash"></i>
                     </div>
-                    <a href="#" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="{% url 'service_status' %}" class="small-box-footer">更多 <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->

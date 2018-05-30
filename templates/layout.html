@@ -23,8 +23,6 @@
     <!-- Morris chart -->
     <link rel="stylesheet" href="/static/adminLTE/bower_components/morris.js/morris.css">
     <!-- Date Picker -->
-    <!-- bootstrap wysihtml5 - text editor -->
-    <link rel="stylesheet" href="/static/adminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
     {#css模板入口#}
     {% block css %} {% endblock %}
 </head>
@@ -122,6 +120,20 @@
                     <a href="{% url 'script' %}">
                         <i class="fa fa-terminal"></i>
                         <span>脚本</span>
+                        <span class="pull-right-container"></span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{% url 'logdir' %}">
+                        <i class="fa fa-file-text"></i>
+                        <span>历史日志</span>
+                        <span class="pull-right-container"></span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{% url 'service_status' %}">
+                        <i class="fa fa-heartbeat"></i>
+                        <span>服务监控</span>
                         <span class="pull-right-container"></span>
                     </a>
                 </li>

@@ -27,7 +27,8 @@ def index(request):
     host_num = models.host_information.objects.all().count()
     DockerContainerNub = len(docker_main.DockerInitial().DockerContainerNow())
     ScriptNum  = scriptmodels.script_data.objects.all().count()
-    return render(request, 'index.html',{'host_num':host_num,'DockerContainerNub':DockerContainerNub,'ScriptNum':ScriptNum,})
+    ServiceErrorNum = models.service_status_detection.objects.filter(url_status=2).filter(port_status=2).count()
+    return render(request, 'index.html',{'host_num':host_num,'DockerContainerNub':DockerContainerNub,'ScriptNum':ScriptNum,'ServiceErrorNum':ServiceErrorNum})
     # return render(request, 'index.html',locals())
 
 def UserLogin(request):

@@ -1,37 +1,57 @@
-{% extends 'base.html' %}
-{% block body %}
-<table class="table table-bordered;table table-hover" style="margin-top: 10px">
-    <thead>
-        <tr>
-            <th>Host Name</th>
-            <th>Service Name</th>
-            <th>Url</th>
-            <th>Port</th>
-            <th>Url Status</th>
-            <th>Port Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in service_status_list %}
-            <tr>
-                <td>{{ i.host_name }}</td>
-                <td>{{ i.service_name }}</td>
-                <td>{{ i.url }}</td>
-                <td>{{ i.port }}</td>
-{#                <td>{{ i.url_status }}</td>#}
-{#                <td>{{ i.port_status }}</td>#}
-                {% if i.url_status == '1' %}
-                     <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
-                {% else %}
-                    <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
-                {% endif %}
-                {% if i.port_status == '1' %}
-                     <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
-                {% else %}
-                    <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>服务状态</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">服务状态</li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Host Name</th>
+                                    <th>Service Name</th>
+                                    <th>Url</th>
+                                    <th>Port</th>
+                                    <th>Url Status</th>
+                                    <th>Port Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for i in service_status_list %}
+                                   <tr>
+                                       <td>{{ i.host_name }}</td>
+                                       <td>{{ i.service_name }}</td>
+                                       <td>{{ i.url }}</td>
+                                       <td>{{ i.port }}</td>=
+                                       {% if i.url_status == '1' %}
+                                           <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
+                                       {% else %}
+                                           <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
+                                       {% endif %}
+                                       {% if i.port_status == '1' %}
+                                           <td><img height="20" width="20" src="/static/image/correct-c-o.png"></td>
+                                       {% else %}
+                                           <td><img height="20" width="20" src="/static/image/error-c-o.png"></td>
+                                       {% endif %}
+                                   </tr>
+                               {% endfor %}
+                            </tbody>
+                        </table>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
 {% endblock %}

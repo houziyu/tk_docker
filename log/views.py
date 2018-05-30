@@ -178,11 +178,9 @@ def LogDir(request):
         return render(request, 'log/logdir.html', {'service_now': service_name_all})
 
 @login_required
-def LogDirPage(request):
+def LogDirList(request):
     service_name = request.GET.get('service_name')
     log_type = request.GET.get('log_type')
-    sort = request.GET.get('sort')
-    print(sort)
     print(service_name, log_type)
     log_path = config.log_dir_master
     service_name_path = log_path + '/' + service_name + '/' + log_type
@@ -195,17 +193,4 @@ def LogDirPage(request):
             time_24 = time.strftime('%Y-%m-%d %H:%M:%S', time_struct)
             all_file.append([i, file_path,time_24])
     print('all_file:',all_file)
-    if sort:
-        all_file = sorted(all_file, key=lambda file_name: file_name[2], reverse=True)
-    else:
-        all_file = sorted(all_file, key=lambda file_name: file_name[1], reverse=True)
-    paginator = Paginator(all_file, 13)  # Show 25 contacts per page
-    page = request.GET.get('page')
-    information = [{'service_name': service_name, 'log_type': log_type,'sort':sort}]
-    try:
-        contacts = paginator.page(page)
-    except PageNotAnInteger:
-        contacts = paginator.page(1)
-    except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
-    return render(request, 'log/catdownlog.html', {"contacts": contacts, 'information': information})
+    return render(request, 'log/catdownlog.html', {'all_file': all_file,'service_name':service_name,'log_type':log_type})
