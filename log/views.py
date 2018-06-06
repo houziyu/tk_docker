@@ -90,7 +90,7 @@ def DockerUpdateAllLog():
                     service_name = service_name + '-service'
                     log_date = datetime.datetime.now().strftime("%Y-%m-%d")
                     service_log_path = '/logs/' + service_name + '/log_info.log'
-                    log_init = y.get_archive(service_log_path,chunk_size=20971520)
+                    log_init = y.get_archive(service_log_path)
                     log_str=''
                     for i in log_init[0]:
                         log_str = log_str + str(i, encoding="utf-8")
@@ -116,7 +116,7 @@ def DockerUpdateALog(hostname,container_name,log_type):
                 print(log_date,service_name,log_type)
                 service_log_path = '/logs/' + service_name + '/'+log_type+'.log'
                 print('/logs/' + service_name + '/'+log_type+'.log')
-                log_init = i.get_archive(service_log_path,chunk_size=20971520)
+                log_init = i.get_archive(service_log_path)
                 log_all= ''
                 for i in log_init[0]:
                     log_all = log_all +  str(i, encoding="utf-8")
