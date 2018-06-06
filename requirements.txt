@@ -1,6 +1,6 @@
 Django==1.11.9
 Pillow==5.1.0
-docker==3.3.0
+docker==2.7.0
 django-crontab==0.7.1
 docker-pycreds==0.2.2
 paramiko==2.4.1

@@ -93,6 +93,9 @@ def DockerUpdateAllLog():
                     service_log_path = '/logs/' + service_name + '/log_info.log'
                     log_init = y.get_archive(service_log_path)
                     log_str = str(log_init[0].data, encoding="utf-8")
+                    # log_str = ''
+                    # for i in log_init[0]:
+                    #     log_str = log_str + str(i, encoding="utf-8")
                     log_dir_master = config.log_dir_master
                     log_local_name = log_dir_master +'/'+ service_name + '/update/'+'update'+ i + '-' + service_name + '-' + log_date + '.log'
                     log_file = open(log_local_name, 'a+')
