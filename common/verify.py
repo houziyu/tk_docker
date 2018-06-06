@@ -1,10 +1,11 @@
 from PIL import Image,ImageDraw,ImageFont,ImageFilter
 import random
 import string
+from lib import config
 from io import BytesIO
 
 #字体的位置，不同版本的系统会有不同
-font_path = 'statics/adminLTE/bower_components/font-awesome/fonts/Arial.ttf'
+font_path = config.font_path
 # font_path = '/Library/Fonts/Hanzipen.ttc'
 #生成几位数的验证码
 number = 4

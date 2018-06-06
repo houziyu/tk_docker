@@ -4,7 +4,6 @@ from lib import docker_main
 from lib import config
 import datetime,time
 import os,zipfile
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from collections import deque
 from dwebsocket.decorators import accept_websocket
@@ -91,8 +90,10 @@ def DockerUpdateAllLog():
                     service_name = service_name + '-service'
                     log_date = datetime.datetime.now().strftime("%Y-%m-%d")
                     service_log_path = '/logs/' + service_name + '/log_info.log'
-                    log_init = y.get_archive(service_log_path)
-                    log_str = str(log_init[0].data, encoding="utf-8")
+                    log_init = y.get_archive(service_log_path,chunk_size=20971520)
+                    log_str=''
+                    for i in log_init[0]:
+                        log_str = log_str + str(i, encoding="utf-8")
                     log_dir_master = config.log_dir_master
                     log_local_name = log_dir_master +'/'+ service_name + '/update/'+'update'+ i + '-' + service_name + '-' + log_date + '.log'
                     log_file = open(log_local_name, 'a+')
@@ -115,7 +116,7 @@ def DockerUpdateALog(hostname,container_name,log_type):
                 print(log_date,service_name,log_type)
                 service_log_path = '/logs/' + service_name + '/'+log_type+'.log'
                 print('/logs/' + service_name + '/'+log_type+'.log')
-                log_init = i.get_archive(service_log_path)
+                log_init = i.get_archive(service_log_path,chunk_size=20971520)
                 log_all= ''
                 for i in log_init[0]:
                     log_all = log_all +  str(i, encoding="utf-8")
