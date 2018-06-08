@@ -2,23 +2,23 @@
 2.现在这个项目在本公司生产环境跑，可以说非常稳定了。但是如果大家使用的话需要看下`/tk_docker/log/cron_dump_log.py`中以及`/tk_docker/common/views`中的代码有的地方因为业务关系我给写死了。叉会腰~<br>
 ---
 3.长啥样？看图<br>
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/login.png)
 登录页面
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/index.png)
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/login.png)
 主页面
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/computer.png)
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/index.png)
 主机管理
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/docker.png)
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/computer.png)
 docker仪表盘
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/log.png)
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/docker.png)
 日志查看
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/log.png)
+脚本及脚本运行
 ![](https://github.com/houziyu/tk_docker/raw/master/document/img/script.png)
 ![](https://github.com/houziyu/tk_docker/raw/master/document/img/script_running.png)
-脚本及脚本运行
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/history_log.png)
 历史日志下载
-![](https://github.com/houziyu/tk_docker/raw/master/document/img/service_status.png)
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/history_log.png)
 服务状态查看
+![](https://github.com/houziyu/tk_docker/raw/master/document/img/service_status.png)
 ---
 4.`pip install -r requirements.txt`<br>
 5.`python manage.py makemigrations`和`python manage.py migrate` 如果出现报错请删除`db.sqlite3`文件<br>
