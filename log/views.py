@@ -120,25 +120,21 @@ def DockerUpdateALog(hostname,container_name,log_type):
                 service_log_path = '/logs/' + service_name + '/'+log_type+'.log'
                 print('/logs/' + service_name + '/'+log_type+'.log')
                 log_init = i.get_archive(service_log_path)
-                # log_all = b''.join(chunk for chunk in log_init[0]).decode('utf-8')
-                # log_all = str(log_init[0].data, encoding="utf-8")
-                # log_all= ''
-                # for i in log_init[0]:
-                #     log_all = log_all +  str(i, encoding="utf-8")
+                log_all = str(log_init[0].data, encoding="utf-8")
                 log_name = hostname + '-' + service_name + '-' + log_date + '-' +  log_type + '.log'
                 log_dir_master = config.log_dir_master
                 log_path = log_dir_master + '/'+'tmp/' + log_name
                 date_now = str(datetime.datetime.now())
-                date_now = bytes(date_now, encoding="utf8")
-                with open(log_path,'wb') as fd:
-                    fd.write(date_now)
-                    for chunk in log_init[0]:
-                        fd.write(chunk)
-                    print('bak ok ~!')
-                # log_file = open(log_path, 'a+')
-                # log_file.write('执行时间:' + date_now+'\n')
-                # log_file.write(log_all)
-                # log_file.close()
+                # date_now = bytes(date_now, encoding="utf8")
+                # with open(log_path,'wb') as fd:
+                #     fd.write(date_now)
+                #     for chunk in log_init[0]:
+                #         fd.write(chunk)
+                #     print('bak ok ~!')
+                log_file = open(log_path, 'a+')
+                log_file.write('执行时间:' + date_now+'\n')
+                log_file.write(log_all)
+                log_file.close()
                 return_results = {'return_results': log_path, 'log_name': log_name}
                 return return_results
             else:
