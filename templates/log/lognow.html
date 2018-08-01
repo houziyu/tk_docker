@@ -51,10 +51,19 @@
                     socket.send(log_info);//发送数据到服务端
                 };
                 socket.onmessage = function (e) {
-                    console.log('message: ' + e.data);//打印服务端返回的数据
+                    {#console.log('message: ' + e.data);//打印服务端返回的数据#}
                     var ele = document.getElementById("message");
                     ele.value = ele.value + e.data;
                     ele.scrollTop = ele.scrollHeight;
+                    var message_length = $("#message").val().split("\n").length;
+                    if (message_length > 500) {
+                        var size_num = message_length - 450;
+                        var message_now = $("#message").val().split("\n");
+                        message_now.splice(0,size_num);
+                        var message_new = message_now.join("\n");
+                        document.getElementById("message").value = message_new;
+                    }
+                    console.log(message_length)
                 };
                 socket.onclose = function () {
                     $('#linking').text('连接关闭');
