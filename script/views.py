@@ -16,6 +16,7 @@ def Script(request):
         # for i in ScriptAll:
         parameter=[]
         single['id'] = i.id
+        single['script_methods'] = i.script_methods
         single['script_name']=i.script_name
         single['service_name'] = i.service_name
         single['server_name'] = i.server_name.host_name
@@ -61,10 +62,12 @@ def ScriptExecution(request):
                 script_parameter = ''
             host_ip = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ip
             script_path = models.script_data.objects.filter(id=script_id).all()[0].script_path
+            script_methods = models.script_data.objects.filter(id=script_id).all()[0].script_methods
             computer_user = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_user
             computer_all = {}
             computer_all['host_ip'] = host_ip
             computer_all['script_path'] = script_path
+            computer_all['script_methods'] = script_methods
             computer_all['computer_user'] = computer_user
             computer_all['script_parameter'] = script_parameter
             computer_all['ssh_type'] = ssh_type
@@ -87,7 +90,7 @@ def line_buffered(f):
 
 # def SshConnect(server_name,script_path,script_parameter):
 def SshConnect(computer_all,socket):
-    command = "bash" + ' ' + computer_all['script_path'] + ' ' + computer_all['script_parameter']
+    command = computer_all['script_methods'] + ' ' + computer_all['script_path'] + ' ' + computer_all['script_parameter']
     print('command:',command)
     if computer_all['ssh_type'] == 'keyfile':
         pkey = paramiko.RSAKey.from_private_key_file(computer_all['computer_keyfile'])

@@ -19,6 +19,7 @@
                                 <tr>
                                     <th>Ordinal Number</th>
                                     <th>Script Name</th>
+                                    <th>Script Methods</th>
                                     <th>Service Name</th>
                                     <th>Server Name</th>
                                     <th>Script Parameter</th>
@@ -31,6 +32,7 @@
                                     <tr>
                                         <td class="script_id">{{ i.id }}</td>
                                         <td>{{ i.script_name }}</td>
+                                        <td>{{ i.script_methods }}</td>
                                         <td>{{ i.service_name }}</td>
                                         <td class="server_name">{{ i.server_name }}</td>
                                         <td class="script_parameter">
@@ -63,7 +65,7 @@
         $('#example').DataTable({
           'paging'      : true,
           'lengthChange': false,
-          'searching'   : true,
+          'searching'   : false,
           'ordering'    : true,
           'info'        : false,
           'autoWidth'   : true

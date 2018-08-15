@@ -31,7 +31,9 @@ docker仪表盘
 11.`/tk_docker/lib/config.py`中的参数`log_tail_line`是查看容器info日志默认输出多少行。`service_name_list`在仪表盘时候显示筛选服务，具体实现方法请看代码。`log_dir_master`日志每日备份保存地址。`ins_env`登录界面上面显示的环境说明<br>
 12.还有需要一点注意的是`/tk_docker/log/cron_dump_log.py`中的代码自己改~。`django-crontab`这模块怎么应用去谷歌一下就好。很简单。<br>
 13.如果要用`docker` 的话记得开`docker` 的远程连接
+14.脚本功能支持Python但是因为paramiko 获取不到环境变量问题，请检查是否存在（/usr/local/bin:/bin:/usr/bin）里。（which 查看路径）.如果不存在。请ln -s 移动到3个目录中的其中一个
 ---
+#docker的远程访问开启方法
 vim /lib/systemd/system/docker.service  
 ExecStart=/usr/bin/dockerd -H 0.0.0.0:2375 -H unix:///var/run/docker.sock
 systemctl daemon-reload

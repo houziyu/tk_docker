@@ -11,6 +11,7 @@ class all_parameter(models.Model):
 
 class script_data(models.Model):
     #脚本的具体参数信息
+    script_methods = models.CharField(max_length=40)
     script_name = models.CharField(max_length=40)
     script_path = models.CharField(max_length=100)
     service_name = models.CharField(max_length=40)
