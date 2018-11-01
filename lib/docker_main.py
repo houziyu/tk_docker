@@ -37,7 +37,10 @@ class DockerInitial(object):
                     data['name'] = name_split[0] + '.' + name_split[1]
                 else:
                     data['name'] = y.name
-                data['image'] = y.image.tags[0]
+                try:
+                    data['image'] = y.image.tags[0]
+                except :
+                    data['image'] = 'none'
                 data['short_id'] = y.short_id
                 data['status'] = y.status
                 print(data)
