@@ -15,15 +15,3 @@ import docker
 # base_url='tcp://16892.168.1.60:2375'
 # # aa = base_url.strip()
 # # print(aa)
-def login(func):
-    def inner(*args,**kwargs):
-        ret = func(*args,**kwargs)
-        print('aaa')
-        return ret
-    return inner
-
-@login
-def aaa(a):
-    print(a)
-
-aaa('hghggg')
