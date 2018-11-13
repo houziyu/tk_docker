@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section class="content-header">
+        <h1>测试管理</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'index' %}"><i class="fa fa-home"></i>首页</a></li>
+            <li class="active">测试管理</li>
+            <li><input type="button" name="back" value="返回" onclick="javascript:history.go(-1);"/></li>
+        </ol>
+    </section>
+        {#控制台头部结束#}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in test_one_list %}
+                               <tr>
+                                       <td>{{ i.title }}</td>
+                                       <td>{{ i.data }}</td>
+                               </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+        <!-- /.box-body -->
+                    </div>
+      <!-- /.box -->
+                </div>
+    <!-- /.col -->
+            </div>
+        </div>
+    </section>
+{% endblock %}

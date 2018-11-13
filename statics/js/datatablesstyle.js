@@ -1,6 +1,6 @@
 $.extend( $.fn.dataTable.defaults, {
   "language": {
-   "search": "<span></span> _INPUT_",
+   "search": "<span>表内查询：</span> _INPUT_",
    "lengthMenu": "<span>_MENU_</span>",
    "paginate": {"sFirst": "首页","sPrevious": "上一页","sNext": "下一页","sLast": "末页" },
    "processing": "正在加载中......",

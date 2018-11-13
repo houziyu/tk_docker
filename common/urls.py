@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^connection_test/$', views.connection_test, name='connection_test'),
     url(r'^service_status/$', views.service_status, name='service_status'),
     url(r'^service_status_detection/$', views.service_status_detection, name='service_status_detection'),
+    url(r'^apitest/$', views.apitest, name='apitest'),
+    url(r'^apitest/details/$', views.api_details, name='api_details'),
 ]

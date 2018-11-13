@@ -14,6 +14,7 @@ import json
 from tk_docker import settings
 from common import verify
 from django.conf import settings  #调用settings
+from lib import  mysql_conn
 # Create your views here.
 
 def global_setting(request):   #把setting方法读取出来
@@ -219,3 +220,74 @@ def UserLogout(request):
     #用户登出
     logout(request)
     return HttpResponseRedirect("/")
+
+def apitest(request):
+    runiter = request.GET.get('runiter')
+    all_sql = '''select * from testresult order by id desc limit 100;'''
+    fail_sql = '''select * from testresult where result=\'fail\' limit 100'''
+    if runiter:
+        all_sql = '''select * from testresult where runIter=%s'''%(runiter)
+        fail_sql = '''select * from testresult where result=\'fail\' and runIter=%s'''%(runiter)
+
+    #查看所有的数据
+    results = mysql_conn.test_mysql(all_sql)
+    test_data_all = []
+    for i in results:
+        id = i[0]
+        method = i[2]
+        url = i[3]
+        result = i[9]
+        createdTime = i[10]
+        runIter = i[11]
+        list_format = {'id':id,'method':method,'url':url,'result':result,'createdTime':createdTime,'runIter':runIter}
+        test_data_all.append(list_format)
+
+    #查看fail状态的数据
+    results = mysql_conn.test_mysql(fail_sql)
+    fail_test_data_all = []
+    for i in results:
+        id = i[0]
+        method = i[2]
+        url = i[3]
+        result = i[9]
+        createdTime = i[10]
+        runIter = i[11]
+        list_format = {'id': id, 'method': method, 'url': url, 'result': result, 'createdTime': createdTime,
+                       'runIter': runIter}
+        fail_test_data_all.append(list_format)
+
+
+    return render(request, 'common/apitest.html', {'test_data_all': test_data_all,'fail_test_data_all':fail_test_data_all})
+
+def api_details(request):
+    apitest_id = request.GET.get('apitest_id')
+    sql = '''select * from testresult where id=%s;'''%(apitest_id)
+    results = mysql_conn.test_mysql(sql)[0]
+    test_one_list=[]
+    test_one_id = {'title':'id','data':results[0]}
+    test_one_caseid = {'title': 'caseid', 'data': results[1]}
+    test_one_method = {'title': 'method', 'data': results[2]}
+    test_one_url = {'title': 'url', 'data': results[3]}
+    test_one_header = {'title': 'header', 'data': results[4]}
+    test_one_data = {'title': 'data', 'data': results[5]}
+    test_one_response = {'title': 'response', 'data': results[6]}
+    test_one_statuscode = {'title': 'statuscode', 'data': results[7]}
+    test_one_message = {'title': 'message', 'data': results[8]}
+    test_one_result = {'title': 'result', 'data': results[9]}
+    test_one_createdTime = {'title': 'createdTime', 'data': results[10]}
+    test_one_runIter = {'title': 'runIter', 'data': results[11]}
+
+    test_one_list.append(test_one_id)
+    test_one_list.append(test_one_caseid)
+    test_one_list.append(test_one_method)
+    test_one_list.append(test_one_url)
+    test_one_list.append(test_one_header)
+    test_one_list.append(test_one_data)
+    test_one_list.append(test_one_response)
+    test_one_list.append(test_one_statuscode)
+    test_one_list.append(test_one_message)
+    test_one_list.append(test_one_result)
+    test_one_list.append(test_one_createdTime)
+    test_one_list.append(test_one_runIter)
+
+    return render(request, 'common/apitest_details.html', {'test_one_list': test_one_list})
