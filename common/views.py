@@ -237,9 +237,10 @@ def apitest(request):
         method = i[2]
         url = i[3]
         result = i[9]
-        createdTime = i[10]
-        runIter = i[11]
+        createdTime = i[11]
+        runIter = i[12]
         list_format = {'id':id,'method':method,'url':url,'result':result,'createdTime':createdTime,'runIter':runIter}
+        print(list_format)
         test_data_all.append(list_format)
 
     #查看fail状态的数据
@@ -250,8 +251,8 @@ def apitest(request):
         method = i[2]
         url = i[3]
         result = i[9]
-        createdTime = i[10]
-        runIter = i[11]
+        createdTime = i[11]
+        runIter = i[12]
         list_format = {'id': id, 'method': method, 'url': url, 'result': result, 'createdTime': createdTime,
                        'runIter': runIter}
         fail_test_data_all.append(list_format)
@@ -261,7 +262,7 @@ def apitest(request):
 
 def api_details(request):
     apitest_id = request.GET.get('apitest_id')
-    sql = '''select * from testresult where id=%s;'''%(apitest_id)
+    sql = '''select * from testresult where id=%s'''%(apitest_id)
     results = mysql_conn.test_mysql(sql)[0]
     test_one_list=[]
     test_one_id = {'title':'id','data':results[0]}
@@ -274,8 +275,9 @@ def api_details(request):
     test_one_statuscode = {'title': 'statuscode', 'data': results[7]}
     test_one_message = {'title': 'message', 'data': results[8]}
     test_one_result = {'title': 'result', 'data': results[9]}
-    test_one_createdTime = {'title': 'createdTime', 'data': results[10]}
-    test_one_runIter = {'title': 'runIter', 'data': results[11]}
+    test_one_comments = {'title': 'comments', 'data': results[10]}
+    test_one_createdTime = {'title': 'createdTime', 'data': results[11]}
+    test_one_runIter = {'title': 'runIter', 'data': results[12]}
 
     test_one_list.append(test_one_id)
     test_one_list.append(test_one_caseid)
@@ -287,6 +289,7 @@ def api_details(request):
     test_one_list.append(test_one_statuscode)
     test_one_list.append(test_one_message)
     test_one_list.append(test_one_result)
+    test_one_list.append(test_one_comments)
     test_one_list.append(test_one_createdTime)
     test_one_list.append(test_one_runIter)
 
