@@ -15,6 +15,7 @@ from tk_docker import settings
 from common import verify
 from django.conf import settings  #调用settings
 from lib import  mysql_conn
+import xlwt
 # Create your views here.
 
 def global_setting(request):   #把setting方法读取出来
@@ -223,47 +224,30 @@ def UserLogout(request):
 
 def apitest(request):
     runiter = request.GET.get('runiter')
+    all_sql_list=[]
     all_sql = '''select * from testresult order by id desc limit 100;'''
     fail_sql = '''select * from testresult where result=\'fail\' limit 100'''
     if runiter:
         all_sql = '''select * from testresult where runIter=%s'''%(runiter)
         fail_sql = '''select * from testresult where result=\'fail\' and runIter=%s'''%(runiter)
-
-    #查看所有的数据
-    results = mysql_conn.test_mysql(all_sql)
-    test_data_all = []
-    for i in results:
-        id = i[0]
-        method = i[2]
-        url = i[3]
-        result = i[9]
-        createdTime = i[11]
-        runIter = i[12]
-        list_format = {'id':id,'method':method,'url':url,'result':result,'createdTime':createdTime,'runIter':runIter}
-        print(list_format)
-        test_data_all.append(list_format)
-
-    #查看fail状态的数据
-    results = mysql_conn.test_mysql(fail_sql)
-    fail_test_data_all = []
-    for i in results:
-        id = i[0]
-        method = i[2]
-        url = i[3]
-        result = i[9]
-        createdTime = i[11]
-        runIter = i[12]
-        list_format = {'id': id, 'method': method, 'url': url, 'result': result, 'createdTime': createdTime,
-                       'runIter': runIter}
-        fail_test_data_all.append(list_format)
-
-
-    return render(request, 'common/apitest.html', {'test_data_all': test_data_all,'fail_test_data_all':fail_test_data_all})
+    all_sql_list.append(all_sql)
+    all_sql_list.append(fail_sql)
+    test_data_all=[]
+    for i in all_sql_list:
+        results = mysql_conn.test_mysql(i)
+        tmp=[]
+        for i in results:
+            list_format = {'id': i[0], 'method': i[2], 'url': i[3], 'result': i[9], 'comments': i[10],
+                           'runIter': i[12]}
+            tmp.append(list_format)
+        test_data_all.append(tmp)
+    return render(request, 'common/apitest.html', {'test_data_all': test_data_all[0],'fail_test_data_all':test_data_all[1]})
 
 def api_details(request):
     apitest_id = request.GET.get('apitest_id')
     sql = '''select * from testresult where id=%s'''%(apitest_id)
     results = mysql_conn.test_mysql(sql)[0]
+    print(results)
     test_one_list=[]
     test_one_id = {'title':'id','data':results[0]}
     test_one_caseid = {'title': 'caseid', 'data': results[1]}
@@ -292,5 +276,41 @@ def api_details(request):
     test_one_list.append(test_one_comments)
     test_one_list.append(test_one_createdTime)
     test_one_list.append(test_one_runIter)
-
     return render(request, 'common/apitest_details.html', {'test_one_list': test_one_list})
+
+def api_data_down(request):
+    runiter = request.GET.get('runiter')
+    file_name = runiter+'.xls'
+    fail_sql = '''select * from testresult where result=\'fail\' and runIter=%s''' % (runiter)
+    count_fail = '''select count(*) from testresult where result=\'fail\' and runIter=%s''' % (runiter)
+    results = mysql_conn.test_mysql(fail_sql)
+    count_results = mysql_conn.test_mysql(count_fail)
+    wb = xlwt.Workbook(encoding='utf-8')
+    sheet = wb.add_sheet("失败数据", cell_overwrite_ok=True)
+    sheet.write(0, 0, '%s的失败数据' % runiter)
+    sheet.write(1, 0, '总共失败条数')
+    sheet.write(1, 1, count_results[0][0])
+    sheet.write(2, 0, 'id')
+    sheet.write(2, 1, 'caseid')
+    sheet.write(2, 2, 'method')
+    sheet.write(2, 3, 'url')
+    sheet.write(2, 4, 'header')
+    sheet.write(2, 5, 'data')
+    sheet.write(2, 6, 'response')
+    sheet.write(2, 7, 'statuscode')
+    sheet.write(2, 8, 'message')
+    sheet.write(2, 9, 'result')
+    sheet.write(2, 10, 'comments')
+    sheet.write(2, 11, 'createdTime')
+    sheet.write(2, 12, 'runIter')
+    line = 3
+    for i in results:
+        column = 0
+        for y in i:
+            print(line, column, y)
+            sheet.write(line, column, y)
+            column = column + 1
+        line = line + 1
+    save_path = config.log_dir_master+'/tmp/'+file_name
+    wb.save(save_path)
+    return render(request, 'log/downandback.html', {'return_results': save_path, 'log_name': file_name})

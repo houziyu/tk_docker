@@ -17,6 +17,7 @@
                         <span>RunIter:</span>
                         <input type="text" id="find_runiter" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'');">
                         <a class="btn btn-primary btn-xs" id="find" role="button" >查找</a>
+                        <a class="btn btn-primary btn-xs" id="down" role="button" >下载</a>
                         <li class="active"><a href="#revenue-chart" data-toggle="tab">全部</a></li>
                         <li ><a href="#sales-chart" data-toggle="tab">错误</a></li>
                     </ul>
@@ -34,7 +35,7 @@
                                                 <th>Method</th>
                                                 <th>Url</th>
                                                 <th>Result</th>
-                                                <th>CreatedTime</th>
+                                                <th>comments</th>
                                                 <th>RunIter</th>
                                                 <th>Script Slot</th>
                                             </tr>
@@ -46,7 +47,7 @@
                                                    <td>{{ i.method }}</td>
                                                    <td>{{ i.url }}</td>
                                                    <td>{{ i.result }}</td>
-                                                   <td>{{ i.createdTime }}</td>
+                                                   <td>{{ i.comments }}</td>
                                                    <td>{{ i.runIter }}</td>
                                                    <td><a class="btn btn-primary btn-xs build"  role="button" >详情</a></td>
                                                </tr>
@@ -71,7 +72,7 @@
                                                 <th>Method</th>
                                                 <th>Url</th>
                                                 <th>Result</th>
-                                                <th>CreatedTime</th>
+                                                <th>comments</th>
                                                 <th>RunIter</th>
                                                 <th>Script Slot</th>
                                             </tr>
@@ -83,7 +84,7 @@
                                                    <td>{{ i.method }}</td>
                                                    <td>{{ i.url }}</td>
                                                    <td>{{ i.result }}</td>
-                                                   <td>{{ i.createdTime }}</td>
+                                                   <td>{{ i.comments }}</td>
                                                    <td>{{ i.runIter }}</td>
                                                    <td><a class="btn btn-primary btn-xs build"  role="button" >详情</a></td>
                                                </tr>
@@ -144,6 +145,20 @@
             if(find_runiter.length == 14)
                 {
                     window.location.href='/apitest/?runiter='+find_runiter;
+                }
+            else
+                {
+                alert("请输入正确RunIter号码")
+                }
+        })
+    });
+    $(function(){
+        $("#down").on('click',function () {
+            var find_runiter = $("#find_runiter").val();
+            console.log(find_runiter);
+            if(find_runiter.length == 14)
+                {
+                    window.location.href='/apitest/down/?runiter='+find_runiter;
                 }
             else
                 {
