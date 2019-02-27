@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block content %}
     <section class="content-header">
         <h1>{{ container_name }}
@@ -23,7 +24,11 @@
                 <div class="box">
         <!-- /.box-header -->
                     <div class="box-body">
-                        <textarea id='message' disabled="disabled" style="height: 600px;width: 100%;border-style: solid;border-color: white;resize: none">{{ logs }}</textarea>
+                        <code id='message' style="background:white;height: 600px;width: 100%;border-style: solid;border-color: white;display: block;overflow:scroll;">
+                                {% for foo in logs %}
+                                <span style="display: block">{{ foo }}</span>
+                                {% endfor %}
+                        </code>
 {#                        {{ logs }}#}
         <!-- /.box-body -->
                     </div>
@@ -42,6 +47,7 @@
             var hostname = '{{ hostname }}';
             var container_name = '{{ container_name }}';
             var socket;
+            var log_tail_line = {{ log_tail_line }};
             if (log_type == "log_info") {
                 socket = new WebSocket("ws://" + window.location.host + "/log/log_socket/");
                 socket.onopen = function () {
@@ -51,19 +57,16 @@
                     socket.send(log_info);//发送数据到服务端
                 };
                 socket.onmessage = function (e) {
+                    $("#message").append("<span style=\"display: block\";>"+e.data+"</span>");
                     {#console.log('message: ' + e.data);//打印服务端返回的数据#}
                     var ele = document.getElementById("message");
-                    ele.value = ele.value + e.data;
                     ele.scrollTop = ele.scrollHeight;
-                    var message_length = $("#message").val().split("\n").length;
-                    if (message_length > 500) {
-                        var size_num = message_length - 450;
-                        var message_now = $("#message").val().split("\n");
-                        message_now.splice(0,size_num);
-                        var message_new = message_now.join("\n");
-                        document.getElementById("message").value = message_new;
+                    log_tail_line = log_tail_line+ 1;
+                    console.log(log_tail_line);
+                    if (log_tail_line > 1000) {
+                        $("#message span:lt(500)").remove();
+                        log_tail_line=500;
                     }
-                    console.log(message_length)
                 };
                 socket.onclose = function () {
                     $('#linking').text('连接关闭');

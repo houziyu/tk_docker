@@ -44,14 +44,19 @@
                 var script_parameter = document.getElementById('script_parameter').innerHTML;
                 var script_info = '{\'script_id\':'+script_id+','+'\'script_parameter\':'+'\''+script_parameter+'\''+'}';
                 var ele = document.getElementById("message");
+                var lastData = '';
                 socket.onopen = function () {
                     console.log('WebSocket open');//成功连接上Websocket
                     socket.send(script_info);//发送数据到服务端
                 };
                 socket.onmessage = function (e) {
-                    console.log('message: ' + e.data);//打印服务端返回的数据
-                    ele.value = ele.value + e.data;
-                    ele.scrollTop = ele.scrollHeight;
+                     if (lastData == e.data){
+                         console.log(lastData + '两次数据相同跳过打印')
+                     }else {
+                         ele.value = ele.value + e.data;
+                         ele.scrollTop = ele.scrollHeight;
+                         lastData = e.data;
+                     }
                 };
             }else {
                 document.getElementById('info').style.display = 'none';

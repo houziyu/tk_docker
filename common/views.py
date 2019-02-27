@@ -225,8 +225,8 @@ def UserLogout(request):
 def apitest(request):
     runiter = request.GET.get('runiter')
     all_sql_list=[]
-    all_sql = '''select * from testresult order by id desc limit 100;'''
-    fail_sql = '''select * from testresult where result=\'fail\' limit 100'''
+    all_sql = '''select * from testresult order by id desc limit 200;'''
+    fail_sql = '''select * from testresult where result=\'fail\' limit 200'''
     if runiter:
         all_sql = '''select * from testresult where runIter=%s'''%(runiter)
         fail_sql = '''select * from testresult where result=\'fail\' and runIter=%s'''%(runiter)
@@ -237,8 +237,12 @@ def apitest(request):
         results = mysql_conn.test_mysql(i)
         tmp=[]
         for i in results:
-            list_format = {'id': i[0], 'method': i[2], 'url': i[3], 'result': i[9], 'comments': i[10],
+            if i[10]:
+                list_format = {'id': i[0], 'method': i[2], 'url': i[3], 'result': i[9], 'comments': i[10],
                            'runIter': i[12]}
+            else:
+                list_format = {'id': i[0], 'method': i[2], 'url': i[3], 'result': i[9], 'comments': "null",
+                               'runIter': i[12]}
             tmp.append(list_format)
         test_data_all.append(tmp)
     return render(request, 'common/apitest.html', {'test_data_all': test_data_all[0],'fail_test_data_all':test_data_all[1]})

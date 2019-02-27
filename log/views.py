@@ -16,8 +16,8 @@ def LogNow(request):
         ContainerName = request.GET.get('container_name')
         log_type = request.GET.get('log_type')
         if log_type == 'log_info':
-            logs = DockerLog(Hostname, ContainerName)
-            info = {'logs':logs,'log_type':log_type ,'hostname': Hostname, 'container_name': ContainerName}
+            logs = str(DockerLog(Hostname, ContainerName),encoding="utf-8").split("\n")
+            info = {'logs':logs,'log_type':log_type ,'hostname': Hostname, 'container_name': ContainerName,'log_tail_line':config.log_tail_line}
             return render(request, 'log/lognow.html', info)
             # 获取到了容器的name 然后去lib中搜索name的容器然后进行日志打印
         elif log_type == 'log_error':
