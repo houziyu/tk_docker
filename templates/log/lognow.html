@@ -26,7 +26,7 @@
                     <div class="box-body">
                         <code id='message' style="background:white;height: 600px;width: 100%;border-style: solid;border-color: white;display: block;overflow:scroll;">
                                 {% for foo in logs %}
-                                <span style="display: block">{{ foo }}</span>
+                                <span style="display: block;color: black">{{ foo }}</span>
                                 {% endfor %}
                         </code>
 {#                        {{ logs }}#}
@@ -57,7 +57,7 @@
                     socket.send(log_info);//发送数据到服务端
                 };
                 socket.onmessage = function (e) {
-                    $("#message").append("<span style=\"display: block\";>"+e.data+"</span>");
+                    $("#message").append("<span style=\"display: block\;color: black\";>"+e.data+"</span>");
                     {#console.log('message: ' + e.data);//打印服务端返回的数据#}
                     var ele = document.getElementById("message");
                     ele.scrollTop = ele.scrollHeight;

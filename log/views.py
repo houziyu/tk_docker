@@ -25,10 +25,11 @@ def LogNow(request):
             f = open(docker_download_log_path['return_results'])
             log_format = f.readlines()
             log_format = deque(log_format, 500)
-            log_all = ''
-            for i in log_format:
-                log_all = log_all + i
-            info = {'logs': log_all,'log_type':log_type , 'hostname': Hostname, 'container_name': ContainerName}
+            # print('format',log_format)
+            # log_all = ''
+            # for i in log_format:
+            #     log_all = log_all + i
+            info = {'logs': log_format,'log_type':log_type , 'hostname': Hostname, 'container_name': ContainerName}
             return render(request, 'log/lognow.html', info)
 
 def DockerLog(Hostname, ContainerName):

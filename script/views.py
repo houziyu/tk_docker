@@ -39,7 +39,7 @@ def script_results(request):
         script_info['script_name'] = models.script_data.objects.filter(id=script_id).all()[0].script_name
         script_info['script_id'] = script_id
         script_info['script_parameter'] = script_parameter
-        now_time = datetime.datetime.now()
+        now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         models.script_data.objects.filter(id=script_id).update(last_execution=now_time)
         return render(request, 'script/script_results.html',{'script_info':script_info})
     elif script_status == 2:
