@@ -87,10 +87,17 @@ WSGI_APPLICATION = 'tk_docker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST':'IP',
+        'PORT':3306,
+        'USER':'user',
+        'PASSWORD':'mmima',
+        'NAME': 'tk_docker_dev',
     }
 }
+
 
 
 # Password validation
@@ -140,4 +147,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'statics'),
 )
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-SITE_NAME = '诚联信'
+SITE_NAME = '诚联信预发布'

@@ -51,8 +51,7 @@ def UserLogin(request):
             login_response["error_msg"] = '验证码错误！！请重新输入！！'
         return HttpResponse(json.dumps(login_response))
     else:
-        ins_env = config.ins_env
-        return render(request, 'login.html', {'ins_env': ins_env, })
+        return render(request, 'login.html')
 
 def get_valid_img(request):
     data = verify.gene_code(request)

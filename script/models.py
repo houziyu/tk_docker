@@ -17,7 +17,14 @@ class script_data(models.Model):
     service_name = models.CharField(max_length=40)
     server_name = models.ForeignKey(host_information,on_delete=models.CASCADE,)
     script_parameter = models.ManyToManyField(all_parameter,blank=True)
-    status = models.IntegerField(choices=[(1, '空闲中'),(2, '进行中'),],default=1)
     last_execution = models.CharField(max_length=50,blank=True)
     def __str__(self):
         return self.script_name
+
+
+class script_status(models.Model):
+    # 脚本的具体参数信息
+    status = models.IntegerField(choices=[(1, '空闲中'), (2, '进行中'), ], default=1)
+
+    def __int__(self):
+        return self.status

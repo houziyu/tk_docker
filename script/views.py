@@ -33,8 +33,9 @@ def Script(request):
 def script_results(request):
     script_id = request.GET.get('script_id')
     script_parameter = request.GET.get('script_parameter')
-    script_status = models.script_data.objects.filter(id=script_id).all()[0].status
-    if script_status == 1:
+    # script_status = models.script_data.objects.filter(id=script_id).all()[0].status
+    script_script_status = models.script_status.objects.filter(id=1).all()[0].status
+    if script_script_status == 1:
         script_info = {}
         script_info['script_name'] = models.script_data.objects.filter(id=script_id).all()[0].script_name
         script_info['script_id'] = script_id
@@ -42,9 +43,11 @@ def script_results(request):
         now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         models.script_data.objects.filter(id=script_id).update(last_execution=now_time)
         return render(request, 'script/script_results.html',{'script_info':script_info})
-    elif script_status == 2:
+    elif script_script_status == 2:
         error = '正在编译。请稍后再试。'
         return render(request, 'script/script_results.html', {'error': error})
+    else:
+        return render(request, 'script/script_results.html', {'error': '报错了'})
 
 @accept_websocket
 def ScriptExecution(request):
@@ -56,7 +59,8 @@ def ScriptExecution(request):
             print(script_info)
             script_id  = script_info['script_id']
             script_parameter = script_info['script_parameter']
-            models.script_data.objects.filter(id=script_id).update(status=2)
+            # models.script_data.objects.filter(id=script_id).update(status=2)
+            models.script_status.objects.filter(id=1).update(status=2)
             ssh_type = models.script_data.objects.filter(id=script_id).all()[0].server_name.host_ssh_type
             if script_parameter == 'null':
                 script_parameter = ''
@@ -80,7 +84,8 @@ def ScriptExecution(request):
                 computer_all['computer_keyfile'] = computer_keyfile
                 print(computer_all)
             SshConnect(computer_all,request.websocket)
-            models.script_data.objects.filter(id=script_id).update(status=1)
+            models.script_status.objects.filter(id=1).update(status=1)
+            # models.script_data.objects.filter(id=script_id).update(status=1)
             print('脚本状态更变为1')
 
 def line_buffered(f):
