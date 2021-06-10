@@ -1,4 +1,4 @@
-Django==1.11.9
+Django==2.2.24
 Pillow==5.1.0
 docker==2.7.0
 django-crontab==0.7.1
